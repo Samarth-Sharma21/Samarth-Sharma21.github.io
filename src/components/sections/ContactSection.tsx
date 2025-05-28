@@ -13,7 +13,7 @@ const ContactSection: React.FC = () => {
     },
     {
       name: 'LinkedIn',
-      url: 'https://linkedin.com/in/samarth-sharma',
+      url: 'https://linkedin.com/in/samarth-sh',
       icon: <Linkedin className='w-5 h-5' />,
     },
     {
