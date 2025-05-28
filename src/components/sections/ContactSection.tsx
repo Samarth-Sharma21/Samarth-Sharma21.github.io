@@ -82,7 +82,7 @@ const ContactSection: React.FC = () => {
                   Location
                 </h4>
                 <p className='text-secondary-light dark:text-secondary-dark'>
-                  Bangalore, India
+                  Mumbai, India
                 </p>
               </div>
             </div>

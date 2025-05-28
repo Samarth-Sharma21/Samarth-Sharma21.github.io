@@ -4,7 +4,7 @@ export const projects: Project[] = [
   {
     title: "AI Therapist Chatbot",
     description: "Conversational AI assistant for mental health support with real-time responses.",
-    tech: ["React", "Node.js", "OpenAI"],
+    tech: ["React", "Node.js", "Llama API"],
     image: "https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     github: "https://github.com/Samarth-Sharma21/AI_Therapist",
     demo: ""

@@ -2,7 +2,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const AboutSection: React.FC = () => {
-  const profileImageUrl = 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=600';
+  const profileImageUrl = '/me.jpeg';
+  <img src={profileImageUrl} alt='Profile' />;
+
 
   return (
     <section id="about" className="section-padding bg-gray-50 dark:bg-gray-900">
@@ -78,7 +80,7 @@ const AboutSection: React.FC = () => {
                   Location
                 </h4>
                 <p className="text-secondary-light dark:text-secondary-dark">
-                  Bangalore, India
+                  Mumbai, India
                 </p>
               </div>
               
@@ -92,12 +94,12 @@ const AboutSection: React.FC = () => {
               </div>
               
               <div>
-                <h4 className="text-lg font-semibold text-text-light dark:text-text-dark mb-2">
+                {/* <h4 className="text-lg font-semibold text-text-light dark:text-text-dark mb-2">
                   Experience
                 </h4>
                 <p className="text-secondary-light dark:text-secondary-dark">
                   3+ Years
-                </p>
+                </p> */}
               </div>
             </div>
           </motion.div>
