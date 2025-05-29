@@ -4,16 +4,28 @@ import { Github, Linkedin, Mail, Send } from 'lucide-react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-// Utility function to encode strings to bypass filters
+// Utility functions to bypass email filters and DNS restrictions
 const encodeEmail = (email: string) => {
   try {
-    return email
+    // Multiple encoding methods for better bypass
+    const base64 = btoa(email);
+    const hex = email
       .split('')
       .map((char) => char.charCodeAt(0).toString(16))
       .join('');
+    return Math.random() > 0.5 ? base64 : hex; // Randomly choose encoding method
   } catch (e) {
     return email;
   }
+};
+
+const getFormEndpoint = (email: string) => {
+  const endpoints = [
+    `https://formsubmit.co/${encodeEmail(email)}`,
+    `https://formsubmit.co/ajax/${email}`,
+    `https://formsubmit.co/${window.atob('c2FtYXJ0aHNoYXJtYTc2MjFAZ21haWwuY29t')}`
+  ];
+  return endpoints[Math.floor(Math.random() * endpoints.length)];
 };
 
 const ContactSection: React.FC = () => {
@@ -88,7 +100,7 @@ const ContactSection: React.FC = () => {
         document.body.appendChild(form);
         form.submit();
         setTimeout(() => document.body.removeChild(form), 1000);
-        createToast('Message sent successfully!', true);
+        createToast("Your message has been received — I'll get back to you at the earliest.", true);
         resetForm();
         setSubmitting(false);
         return;
@@ -137,10 +149,9 @@ const ContactSection: React.FC = () => {
       if (isMobile) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action =
-          'https://formsubmit.co/' +
-          window.atob('c2FtYXJ0aHNoYXJtYTc2MjFAZ21haWwuY29t'); // Encode email to bypass filters
+        form.action = getFormEndpoint('samarthsharma7621@gmail.com');
         form.style.display = 'none';
+        form.target = '_blank'; // Opens in new tab to prevent navigation issues
 
         const addField = (name: string, value: string) => {
           const input = document.createElement('input');
@@ -164,7 +175,7 @@ const ContactSection: React.FC = () => {
         try {
           form.submit();
           createToast(
-            'Your message has been received — I’ll get back to you at the earliest.',
+            "Your message has been received — I'll get back to you at the earliest.",
             true
           );
           resetForm();
@@ -177,14 +188,15 @@ const ContactSection: React.FC = () => {
           }, 1000);
         }
       } else {
-        // Desktop submission remains the same
-        const response = await fetch(
-          'https://formsubmit.co/ajax/samarthsharma7621@gmail.com',
-          {
+        // Desktop submission with fallback
+        const endpoint = getFormEndpoint('samarthsharma7621@gmail.com');
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Accept: 'application/json',
+              'Accept': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest',
+              'Cache-Control': 'no-cache',
             },
             body: JSON.stringify({
               ...values,
@@ -198,7 +210,7 @@ const ContactSection: React.FC = () => {
 
         if (response.ok) {
           createToast(
-            'Thank you for reaching out! I will get back to you shortly.',
+            "Your message has been received — I'll get back to you at the earliest.",
             true
           );
           resetForm();
