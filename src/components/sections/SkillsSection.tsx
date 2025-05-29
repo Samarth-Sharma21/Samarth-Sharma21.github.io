@@ -45,14 +45,21 @@ const SkillsSection: React.FC = () => {
   };
 
   return (
-    <section id="skills" className="section-padding bg-gray-50 dark:bg-gray-900">
+    <motion.section 
+      id="skills" 
+      className="section-padding bg-gray-50 dark:bg-gray-900"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-200px" }}
+      transition={{ duration: 0.8 }}
+    >
       <div className="container-custom">
         <motion.div
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
           <h2 className="text-text-light dark:text-text-dark font-clash font-bold">
             My Skills
@@ -65,10 +72,16 @@ const SkillsSection: React.FC = () => {
         </motion.div>
         
         {/* Tabs */}
-        <div className="flex justify-center mb-12">
+        <motion.div 
+          className="flex justify-center mb-12"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
           <div className="inline-flex p-1 rounded-xl bg-gray-200 dark:bg-gray-800">
-            {tabs.map((tab) => (
-              <button
+            {tabs.map((tab, index) => (
+              <motion.button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -76,6 +89,12 @@ const SkillsSection: React.FC = () => {
                     ? 'text-text-light dark:text-text-dark'
                     : 'text-secondary-light dark:text-secondary-dark hover:text-text-light dark:hover:text-text-dark'
                 }`}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 {activeTab === tab.id && (
                   <motion.div
@@ -85,10 +104,10 @@ const SkillsSection: React.FC = () => {
                   />
                 )}
                 <span className="relative z-10">{tab.label}</span>
-              </button>
+              </motion.button>
             ))}
           </div>
-        </div>
+        </motion.div>
         
         {/* Skills Content */}
         <AnimatePresence mode="wait">
@@ -132,7 +151,7 @@ const SkillsSection: React.FC = () => {
           </motion.div>
         </AnimatePresence>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

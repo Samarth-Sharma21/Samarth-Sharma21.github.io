@@ -32,14 +32,21 @@ const ContactSection: React.FC = () => {
   });
 
   return (
-    <section id='contact' className='section-padding'>
+    <motion.section 
+      id='contact' 
+      className='section-padding'
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-200px" }}
+      transition={{ duration: 0.8 }}
+    >
       <div className='container-custom'>
         <motion.div
           className='text-center mb-16'
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6 }}>
+          transition={{ duration: 0.8, delay: 0.2 }}>
           <h2 className='text-text-light dark:text-text-dark font-clash font-bold'>
             Get In Touch
           </h2>
@@ -124,6 +131,52 @@ const ContactSection: React.FC = () => {
                 initialValues={{ name: '', email: '', message: '' }}
                 validationSchema={contactFormSchema}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
+                  // Create toast notification element
+                  const createToast = (message: string, isSuccess: boolean) => {
+                    // Remove any existing toast
+                    const existingToast = document.getElementById('form-toast');
+                    if (existingToast) {
+                      existingToast.remove();
+                    }
+
+                    // Create new toast
+                    const toast = document.createElement('div');
+                    toast.id = 'form-toast';
+                    toast.className = `fixed bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 transition-all duration-300 ${
+                      isSuccess
+                        ? 'bg-green-500 text-white'
+                        : 'bg-red-500 text-white'
+                    }`;
+                    toast.style.opacity = '0';
+
+                    // Add icon based on status
+                    const icon = document.createElement('span');
+                    icon.innerHTML = isSuccess
+                      ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+                      : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+
+                    // Add message
+                    const text = document.createElement('span');
+                    text.textContent = message;
+
+                    toast.appendChild(icon);
+                    toast.appendChild(text);
+                    document.body.appendChild(toast);
+
+                    // Animate in
+                    setTimeout(() => {
+                      toast.style.opacity = '1';
+                    }, 10);
+
+                    // Animate out after delay
+                    setTimeout(() => {
+                      toast.style.opacity = '0';
+                      setTimeout(() => {
+                        toast.remove();
+                      }, 200);
+                    }, 4000);
+                  };
+
                   fetch(
                     'https://formsubmit.co/ajax/samarthsharma7621@gmail.com',
                     {
@@ -145,16 +198,19 @@ const ContactSection: React.FC = () => {
                   )
                     .then((response) => {
                       if (response.ok) {
-                        alert('Message sent successfully!');
+                        createToast('Message sent successfully!', true);
                         resetForm();
                       } else {
-                        alert('Failed to send message.');
+                        throw new Error('Something went wrong');
                       }
                       setSubmitting(false);
                     })
                     .catch((error) => {
                       console.error('Error:', error);
-                      alert('Something went wrong.');
+                      createToast(
+                        'Failed to send message. Please try again.',
+                        false
+                      );
                       setSubmitting(false);
                     });
                 }}>
@@ -234,7 +290,7 @@ const ContactSection: React.FC = () => {
           </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

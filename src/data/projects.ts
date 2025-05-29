@@ -6,6 +6,11 @@ export const projects: Project[] = [
     description: "Conversational AI assistant for mental health support with real-time responses.",
     tech: ["React", "Node.js", "Llama API"],
     image: "https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    images: [
+      "https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
     github: "https://github.com/Samarth-Sharma21/AI_Therapist",
     demo: ""
   },
@@ -14,6 +19,11 @@ export const projects: Project[] = [
     description: "Memory-sharing app for dementia patients with collaborative family features.",
     tech: ["React", "Supabase"],
     image: "https://images.pexels.com/photos/3078831/pexels-photo-3078831.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    images: [
+      "https://images.pexels.com/photos/3078831/pexels-photo-3078831.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/5699456/pexels-photo-5699456.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/4101143/pexels-photo-4101143.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
     github: "https://github.com/Samarth-Sharma21/ReKindle",
     demo: "https://samarth-sharma21.github.io/ReKindle"
   },
@@ -22,6 +32,11 @@ export const projects: Project[] = [
     description: "Fully featured online store with product catalog and payment integration.",
     tech: ["React", "Node.js", "MongoDB"],
     image: "https://images.pexels.com/photos/5076516/pexels-photo-5076516.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    images: [
+      "https://images.pexels.com/photos/5076516/pexels-photo-5076516.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://images.pexels.com/photos/4968391/pexels-photo-4968391.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    ],
     github: "https://github.com/Samarth-Sharma21/ecommerce-platform",
     demo: "https://samarth-ecommerce.netlify.app"
   },

@@ -198,44 +198,81 @@ const Header: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}>
-            {/* Background overlay */}
-            <div className='absolute inset-0 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md' />
+            transition={{ duration: 0.3 }}>
+            {/* Background overlay with 80% blur */}
+            <motion.div
+              className='absolute inset-0 bg-white/40 dark:bg-background-dark/40 border-0'
+              initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+              animate={{ opacity: 1, backdropFilter: 'blur(12px)' }}
+              exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+              transition={{ duration: 0.4 }}
+              style={{
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+              }}
+            />
 
             {/* Menu content */}
-            <div className='relative z-10 container-custom pt-20 pb-8'>
+            <motion.div
+              className='relative z-10 container-custom pt-20 pb-8'
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.5, delay: 0.1 }}>
               <nav className='flex flex-col space-y-6'>
-                {navLinks.map((link) => (
-                  <motion.div
-                    key={link.name}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 * navLinks.indexOf(link) }}>
-                    <Link
-                      to={link.path}
-                      className={`text-lg font-medium transition-colors duration-300 relative inline-block ${
-                        isCurrentlyActive(link.path)
-                          ? 'text-primary-light dark:text-primary-dark'
-                          : 'text-text-light dark:text-text-dark'
-                      }`}
-                      onClick={closeMenu}>
-                      {link.name}
-                      {isCurrentlyActive(link.path) && (
-                        <motion.span
-                          className='absolute -bottom-1 left-0 w-full h-0.5 bg-primary-light dark:bg-primary-dark rounded-full'
-                          layoutId='mobile-navbar-indicator'
-                          transition={{
-                            type: 'spring',
-                            stiffness: 300,
-                            damping: 30,
-                          }}
-                        />
-                      )}
-                    </Link>
-                  </motion.div>
-                ))}
+                {navLinks.map((link, index) => {
+                  const isActive = isCurrentlyActive(link.path);
+                  return (
+                    <motion.div
+                      key={link.name}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{
+                        delay: 0.1 * index,
+                        duration: 0.5,
+                        ease: [0.25, 0.1, 0.25, 1.0],
+                      }}>
+                      <Link
+                        to={link.path}
+                        className={`text-xl font-medium transition-all duration-300 relative inline-block ${
+                          isActive
+                            ? 'text-primary-light dark:text-primary-dark font-semibold'
+                            : 'text-text-light dark:text-text-dark hover:text-primary-light/80 dark:hover:text-primary-dark/80'
+                        }`}
+                        onClick={closeMenu}>
+                        <span className='relative z-10'>{link.name}</span>
+
+                        {/* Active indicator with animation */}
+                        {isActive && (
+                          <motion.span
+                            className='absolute -bottom-1 left-0 w-full h-0.5 bg-primary-light dark:bg-primary-dark rounded-full'
+                            layoutId='mobile-navbar-indicator'
+                            initial={{ width: '0%', left: '50%' }}
+                            animate={{ width: '100%', left: '0%' }}
+                            transition={{
+                              type: 'spring',
+                              stiffness: 300,
+                              damping: 30,
+                            }}
+                          />
+                        )}
+
+                        {/* Hover indicator */}
+                        {!isActive && (
+                          <motion.span
+                            className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-light/50 dark:bg-primary-dark/50 rounded-full'
+                            initial={{ width: '0%' }}
+                            whileHover={{ width: '100%' }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        )}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </nav>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,60 +1,105 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useTheme } from '../../contexts/ThemeContext';
+import * as THREE from 'three';
 
-interface FloatingObjectProps {
+interface FloatingLogoProps {
   position: [number, number, number];
   rotation: [number, number, number];
-  color: string;
   speed: number;
   size: number;
-  shape: 'cube' | 'sphere' | 'tetrahedron';
+  imageUrl: string;
+  phase: number;
 }
 
-const FloatingObject: React.FC<FloatingObjectProps> = ({
+const degToRad = (deg: number) => (deg * Math.PI) / 180;
+
+const distance = (a: [number, number, number], b: [number, number, number]) => {
+  return Math.sqrt(
+    Math.pow(a[0] - b[0], 2) +
+      Math.pow(a[1] - b[1], 2) +
+      Math.pow(a[2] - b[2], 2)
+  );
+};
+
+const generateNonOverlappingPosition = (
+  existingPositions: [number, number, number][],
+  ranges: {
+    horizontalRange: number;
+    verticalRange: number;
+    depthRange: number;
+  },
+  minDistance: number,
+  maxAttempts = 100
+): [number, number, number] => {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const pos: [number, number, number] = [
+      (Math.random() * 2 - 1) * ranges.horizontalRange,
+      (Math.random() * 2 - 1) * ranges.verticalRange,
+      -(Math.random() * ranges.depthRange),
+    ];
+    const isFarEnough = existingPositions.every(
+      (p) => distance(p, pos) >= minDistance
+    );
+    if (isFarEnough) return pos;
+  }
+  // Fallback to origin if all attempts fail
+  return [0, 0, 0];
+};
+
+const FloatingLogo: React.FC<FloatingLogoProps> = ({
   position,
   rotation,
-  color,
   speed,
   size,
-  shape,
+  imageUrl,
+  phase,
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
+  const texture = useMemo(
+    () => new THREE.TextureLoader().load(imageUrl),
+    [imageUrl]
+  );
+
+  const rotXRef = useRef(rotation[0]);
+  const rotYRef = useRef(rotation[1]);
+  const rotZRef = useRef(rotation[2]);
 
   useFrame((state) => {
     if (!meshRef.current) return;
 
-    // Gentle floating motion
+    const floatAmplitude = 1.5;
     meshRef.current.position.y =
-      position[1] + Math.sin(state.clock.elapsedTime * speed) * 0.2;
+      position[1] +
+      Math.sin(state.clock.elapsedTime * speed + phase) * floatAmplitude;
+    meshRef.current.position.x =
+      position[0] +
+      Math.sin(state.clock.elapsedTime * speed * 0.7 + phase * 1.3) *
+        (floatAmplitude * 0.6);
+    meshRef.current.position.z =
+      position[2] +
+      Math.cos(state.clock.elapsedTime * speed * 0.9 + phase * 0.7) *
+        (floatAmplitude * 0.4);
 
-    // Slow rotation
-    meshRef.current.rotation.x += 0.002 * speed;
-    meshRef.current.rotation.y += 0.001 * speed;
+    meshRef.current.rotation.x =
+      rotXRef.current +
+      Math.sin(state.clock.elapsedTime * speed + phase) * degToRad(20);
+    meshRef.current.rotation.y =
+      rotYRef.current +
+      Math.sin(state.clock.elapsedTime * speed + phase * 1.5) * degToRad(30);
+    meshRef.current.rotation.z =
+      rotZRef.current +
+      Math.sin(state.clock.elapsedTime * speed + phase * 0.5) * degToRad(15);
   });
 
-  const renderShape = () => {
-    switch (shape) {
-      case 'cube':
-        return <boxGeometry args={[size, size, size]} />;
-      case 'sphere':
-        return <sphereGeometry args={[size * 0.6, 16, 16]} />;
-      case 'tetrahedron':
-        return <tetrahedronGeometry args={[size * 0.7, 0]} />;
-      default:
-        return <boxGeometry args={[size, size, size]} />;
-    }
-  };
-
   return (
-    <mesh ref={meshRef} position={position} rotation={rotation}>
-      {renderShape()}
-      <meshStandardMaterial
-        color={color}
+    <mesh ref={meshRef} castShadow>
+      <planeGeometry args={[size, size]} />
+      <meshBasicMaterial
+        map={texture}
         transparent
-        opacity={0.7}
-        emissive={color}
-        emissiveIntensity={0.2}
+        opacity={0.4}
+        toneMapped={false}
       />
     </mesh>
   );
@@ -62,92 +107,93 @@ const FloatingObject: React.FC<FloatingObjectProps> = ({
 
 const FloatingElements: React.FC = () => {
   const { theme } = useTheme();
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
-  const primaryColor = theme === 'dark' ? '#0563bb' : '#0563bb';
-  const secondaryColor = theme === 'dark' ? '#3182ce' : '#D32F2F';
-  const accentColor = theme === 'dark' ? '#60A5FA' : '#2563EB';
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const objects = [
-    {
-      position: [-6, 2, -5],
-      rotation: [0.5, 0.8, 0],
-      color: primaryColor,
-      speed: 0.5,
-      size: 1.2,
-      shape: 'cube' as const,
-    },
-    {
-      position: [7, -1, -8],
-      rotation: [0.2, 0.3, 0.5],
-      color: secondaryColor,
-      speed: 0.7,
-      size: 1.5,
-      shape: 'sphere' as const,
-    },
-    {
-      position: [-2, 3, -6],
-      rotation: [0.1, 1.2, 0.4],
-      color: accentColor,
-      speed: 0.3,
-      size: 0.8,
-      shape: 'tetrahedron' as const,
-    },
-    {
-      position: [-8, -3, -10],
-      rotation: [0.8, 0.3, 0.2],
-      color: primaryColor,
-      speed: 0.4,
-      size: 1.3,
-      shape: 'sphere' as const,
-    },
-    {
-      position: [9, 4, -12],
-      rotation: [0.3, 0.5, 0.2],
-      color: secondaryColor,
-      speed: 0.6,
-      size: 1.0,
-      shape: 'cube' as const,
-    },
-    {
-      position: [3, -2, -7],
-      rotation: [0.6, 0.1, 0.8],
-      color: accentColor,
-      speed: 0.8,
-      size: 0.9,
-      shape: 'tetrahedron' as const,
-    },
-    {
-      position: [-4, 5, -9],
-      rotation: [0.4, 0.7, 0.3],
-      color: primaryColor,
-      speed: 0.35,
-      size: 1.1,
-      shape: 'cube' as const,
-    },
-  ];
+  const isMobile = windowSize.width < 768;
+  const heroHeight = windowSize.height;
+
+  const cameraPosition: [number, number, number] = isMobile
+    ? [0, 0, 80]
+    : [0, 0, 120];
+  const cameraFov = isMobile ? 80 : 60;
+
+  const logosData = [
+    'python',
+    'jupyter',
+    'java',
+    'javascript',
+    'typescript',
+    'nodejs',
+    'react',
+    'nextjs',
+    'mysql',
+    'mongodb',
+    'postgresql',
+    'github',
+    'git',
+  ].map((name) => ({
+    imageUrl: `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${name}/${name}-original.svg`,
+    rotation: [Math.random() * 0.5, Math.random() * 0.5, Math.random() * 0.5],
+    speed: 0.3 + Math.random() * 0.4,
+  }));
+
+  const logosWithPosition = useMemo(() => {
+    const placedPositions: [number, number, number][] = [];
+    const spreadFactor = isMobile ? 0.8 : 1;
+    const verticalRange = heroHeight * 0.1 * spreadFactor;
+    const horizontalRange = windowSize.width * 0.1 * spreadFactor;
+    const depthRange = 30 * spreadFactor;
+
+    const minDistance = 12; // adjust spacing as needed
+
+    return logosData.map((logo) => {
+      const position = generateNonOverlappingPosition(
+        placedPositions,
+        { verticalRange, horizontalRange, depthRange },
+        minDistance
+      );
+      placedPositions.push(position);
+      return {
+        ...logo,
+        position,
+        size: isMobile ? 8 : 10,
+        phase: Math.random() * Math.PI * 2,
+      };
+    });
+  }, [isMobile, windowSize.width, heroHeight]);
 
   return (
     <Canvas
-      style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-      camera={{ position: [0, 0, 10], fov: 75 }}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: `${heroHeight}px`,
+        background: theme === 'dark' ? '#0b0b0b' : '#ffffff',
+        touchAction: 'none',
+      }}
+      camera={{ position: cameraPosition, fov: cameraFov }}
       dpr={[1, 2]}>
-      <ambientLight intensity={0.2} />
-      <directionalLight position={[10, 10, 5]} intensity={0.4} />
-      <pointLight
-        position={[-10, -10, -10]}
-        intensity={0.3}
-        color={primaryColor}
-      />
-      {objects.map((obj, index) => (
-        <FloatingObject
-          key={index}
-          position={obj.position}
-          rotation={obj.rotation}
-          color={obj.color}
-          speed={obj.speed}
-          size={obj.size}
-          shape={obj.shape}
-        />
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[10, 10, 5]} intensity={0.6} />
+      <pointLight position={[-10, -10, -10]} intensity={0.5} color='#0563bb' />
+      {logosWithPosition.map((logo, index) => (
+        <FloatingLogo key={index} {...logo} />
       ))}
     </Canvas>
   );

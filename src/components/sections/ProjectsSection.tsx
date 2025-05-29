@@ -10,16 +10,23 @@ const ProjectsSection: React.FC = () => {
   const featuredProjects = projects.slice(0, 3);
 
   return (
-    <section id="projects" className="section-padding">
+    <motion.section 
+      id="projects" 
+      className="section-padding"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-200px" }}
+      transition={{ duration: 0.8 }}
+    >
       <div className="container-custom">
         <motion.div
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <h2 className="text-text-light dark:text-text-dark font-clash font-bold">
+          <h2 className="text-text-light dark:text-text-dark font-clash font-bold ">
             Featured Projects
           </h2>
           <div className="w-20 h-1 bg-primary-light dark:bg-primary-dark mx-auto mt-4 rounded-full"></div>
@@ -29,26 +36,36 @@ const ProjectsSection: React.FC = () => {
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
           {featuredProjects.map((project, index) => (
             <motion.div
               key={project.title}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 80, scale: 0.8 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              transition={{ 
+                duration: 0.8, 
+                delay: 0.6 + index * 0.2,
+                ease: [0.25, 0.1, 0.25, 1]
+              }}
             >
               <ProjectCard project={project} />
             </motion.div>
           ))}
-        </div>
+        </motion.div>
         
         <motion.div
           className="text-center mt-12"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
         >
           <Link
             to="/projects"
@@ -59,7 +76,7 @@ const ProjectsSection: React.FC = () => {
           </Link>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };
 
