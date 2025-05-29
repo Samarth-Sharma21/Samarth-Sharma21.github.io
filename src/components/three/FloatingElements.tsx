@@ -105,7 +105,13 @@ const FloatingLogo: React.FC<FloatingLogoProps> = ({
   );
 };
 
-const FloatingElements: React.FC = () => {
+interface FloatingElementsProps {
+  marginTop?: number; // Optional margin from the top in pixels
+}
+
+const FloatingElements: React.FC<FloatingElementsProps> = ({
+  marginTop = 0,
+}) => {
   const { theme } = useTheme();
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
@@ -150,11 +156,10 @@ const FloatingElements: React.FC = () => {
     rotation: [Math.random() * 0.5, Math.random() * 0.5, Math.random() * 0.5],
     speed: 0.3 + Math.random() * 0.4,
   }));
-
   const logosWithPosition = useMemo(() => {
     const placedPositions: [number, number, number][] = [];
     const spreadFactor = isMobile ? 0.8 : 1;
-    const verticalRange = heroHeight * 0.1 * spreadFactor;
+    const verticalRange = (heroHeight - marginTop) * 0.1 * spreadFactor;
     const horizontalRange = windowSize.width * 0.1 * spreadFactor;
     const depthRange = 30 * spreadFactor;
 
@@ -174,16 +179,16 @@ const FloatingElements: React.FC = () => {
         phase: Math.random() * Math.PI * 2,
       };
     });
-  }, [isMobile, windowSize.width, heroHeight]);
+  }, [isMobile, windowSize.width, heroHeight, marginTop, logosData]);
 
   return (
     <Canvas
       style={{
         position: 'absolute',
-        top: 0,
+        top: marginTop,
         left: 0,
         width: '100%',
-        height: `${heroHeight}px`,
+        height: `${heroHeight - marginTop}px`,
         background: theme === 'dark' ? '#0b0b0b' : '#ffffff',
         touchAction: 'none',
       }}

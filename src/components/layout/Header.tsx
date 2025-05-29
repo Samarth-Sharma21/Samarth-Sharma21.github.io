@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Moon, Sun } from 'lucide-react';
+import { Menu, Moon, Sun, X } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 const Header: React.FC = () => {
@@ -11,21 +11,37 @@ const Header: React.FC = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
 
-  const isActive = (path: string) => {
-    if (path === '/') {
-      return location.pathname === path && location.hash === '';
-    }
-    if (path.includes('#')) {
-      const hash = path.split('#')[1];
-      return location.hash === `#${hash}`;
-    }
-    return location.pathname.startsWith(path);
-  };
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        menuButtonRef.current &&
+        !menuButtonRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
 
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      // Prevent scrolling when menu is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      // Restore scrolling when menu is closed
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
   // Track current section based on scroll position
   const [activeSection, setActiveSection] = useState('/');
 
@@ -109,19 +125,17 @@ const Header: React.FC = () => {
 
   return (
     <motion.header
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? 'glassmorphic shadow-md border-none py-3'
-          : 'py-5 shadow-none border-none'
+      className={`fixed w-full z-[100] transition-all duration-300 before:absolute before:inset-0 before:z-[-1] ${
+        scrolled ? 'before:glassmorphic py-3' : 'before:bg-transparent py-5'
       } ${
-        scrollDirection === 'down' && scrolled
+        scrollDirection === 'down' && scrolled && !isOpen
           ? '-translate-y-full'
           : 'translate-y-0'
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}>
-      <div className='container-custom flex justify-between items-center'>
+      <div className='container-custom flex justify-between items-center relative z-[101]'>
         <Link to='/' className='flex items-center' onClick={closeMenu}>
           <motion.div
             className='font-clash text-2xl font-bold text-primary-light dark:text-primary-dark'
@@ -178,14 +192,24 @@ const Header: React.FC = () => {
 
           {/* Mobile menu button */}
           <button
+            ref={menuButtonRef}
             aria-label='Toggle menu'
             onClick={toggleMenu}
             className='p-2 md:hidden rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors'>
-            {isOpen ? (
-              <X className='w-6 h-6 text-text-light dark:text-text-dark' />
-            ) : (
-              <Menu className='w-6 h-6 text-text-light dark:text-text-dark' />
-            )}
+            <AnimatePresence mode='wait'>
+              <motion.div
+                key={isOpen ? 'close' : 'menu'}
+                initial={{ rotate: 0, opacity: 0 }}
+                animate={{ rotate: isOpen ? 90 : 0, opacity: 1 }}
+                exit={{ rotate: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}>
+                {isOpen ? (
+                  <X className='w-6 h-6 text-text-light dark:text-text-dark' />
+                ) : (
+                  <Menu className='w-6 h-6 text-text-light dark:text-text-dark' />
+                )}
+              </motion.div>
+            </AnimatePresence>
           </button>
         </div>
       </div>
@@ -194,85 +218,74 @@ const Header: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className='md:hidden fixed inset-0 z-50'
+            className='md:hidden fixed inset-0 z-[99]'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}>
-            {/* Background overlay with 80% blur */}
+            {/* Background overlay */}
             <motion.div
-              className='absolute inset-0 bg-white/40 dark:bg-background-dark/40 border-0'
+              className='fixed inset-0 bg-white/95 dark:bg-background-dark/95 backdrop-blur-md shadow-lg border-b border-gray-200/10 dark:border-gray-800/10'
               initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-              animate={{ opacity: 1, backdropFilter: 'blur(12px)' }}
+              animate={{ opacity: 1, backdropFilter: 'blur(8px)' }}
               exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-              transition={{ duration: 0.4 }}
-              style={{
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-              }}
+              transition={{ duration: 0.3 }}
+              onClick={closeMenu}
             />
 
             {/* Menu content */}
-            <motion.div
-              className='relative z-10 container-custom pt-20 pb-8'
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.5, delay: 0.1 }}>
+            <div
+              ref={menuRef}
+              className='relative z-[102] container-custom pt-24 pb-8'>
+              {/* Close button - absolute positioned */}
+              <motion.button
+                className='absolute top-6 right-4 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors'
+                onClick={closeMenu}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}>
+                <X className='w-6 h-6 text-text-light dark:text-text-dark' />
+              </motion.button>
+
               <nav className='flex flex-col space-y-6'>
-                {navLinks.map((link, index) => {
-                  const isActive = isCurrentlyActive(link.path);
-                  return (
-                    <motion.div
-                      key={link.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
-                      transition={{
-                        delay: 0.1 * index,
-                        duration: 0.5,
-                        ease: [0.25, 0.1, 0.25, 1.0],
-                      }}>
-                      <Link
-                        to={link.path}
-                        className={`text-xl font-medium transition-all duration-300 relative inline-block ${
-                          isActive
-                            ? 'text-primary-light dark:text-primary-dark font-semibold'
-                            : 'text-text-light dark:text-text-dark hover:text-primary-light/80 dark:hover:text-primary-dark/80'
-                        }`}
-                        onClick={closeMenu}>
-                        <span className='relative z-10'>{link.name}</span>
-
-                        {/* Active indicator with animation */}
-                        {isActive && (
-                          <motion.span
-                            className='absolute -bottom-1 left-0 w-full h-0.5 bg-primary-light dark:bg-primary-dark rounded-full'
-                            layoutId='mobile-navbar-indicator'
-                            initial={{ width: '0%', left: '50%' }}
-                            animate={{ width: '100%', left: '0%' }}
-                            transition={{
-                              type: 'spring',
-                              stiffness: 300,
-                              damping: 30,
-                            }}
-                          />
-                        )}
-
-                        {/* Hover indicator */}
-                        {!isActive && (
-                          <motion.span
-                            className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-light/50 dark:bg-primary-dark/50 rounded-full'
-                            initial={{ width: '0%' }}
-                            whileHover={{ width: '100%' }}
-                            transition={{ duration: 0.3 }}
-                          />
-                        )}
-                      </Link>
-                    </motion.div>
-                  );
-                })}
+                {navLinks.map((link, index) => (
+                  <motion.div
+                    key={link.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{
+                      delay: 0.05 * index,
+                      duration: 0.4,
+                      ease: [0.25, 0.1, 0.25, 1.0],
+                    }}>
+                    <Link
+                      to={link.path}
+                      className={`text-xl font-medium transition-all duration-300 relative inline-block hover:text-primary-light dark:hover:text-primary-dark ${
+                        isCurrentlyActive(link.path)
+                          ? 'text-primary-light dark:text-primary-dark font-semibold'
+                          : 'text-text-light dark:text-text-dark'
+                      }`}
+                      onClick={closeMenu}>
+                      {link.name}
+                      {isCurrentlyActive(link.path) && (
+                        <motion.span
+                          className='absolute -bottom-1 left-0 w-full h-0.5 bg-primary-light dark:bg-primary-dark rounded-full'
+                          layoutId='mobile-navbar-indicator'
+                          transition={{
+                            type: 'spring',
+                            stiffness: 300,
+                            damping: 30,
+                          }}
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                ))}
               </nav>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

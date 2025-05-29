@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, ChevronDown } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import FloatingElements from '../three/FloatingElements';
-import { Link } from 'react-scroll';
 
 const HeroSection: React.FC = () => {
   const scrollToAbout = () => {
@@ -31,12 +30,12 @@ const HeroSection: React.FC = () => {
   const nameArray = 'Samarth Sharma'.split('');
 
   return (
-    <section className='relative min-h-screen flex items-center pt-20'>
+    <section className='relative min-h-screen flex flex-col justify-between pt-20 pb-16 select-none'>
+      {' '}
       <div className='absolute inset-0 overflow-hidden'>
-        <FloatingElements />
+        <FloatingElements marginTop={80} />
       </div>
-
-      <div className='container-custom relative z-10'>
+      <div className='container-custom relative z-10 flex-1 flex items-center'>
         <div className='max-w-3xl'>
           <motion.div
             variants={container}
@@ -49,7 +48,7 @@ const HeroSection: React.FC = () => {
               Hello, I'm
             </motion.p>
 
-            <motion.h1 className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-clash font-bold text-text-light dark:text-text-dark leading-tight mb-4'>
+            <motion.h1 className='text-5xl md:text-6xl lg:text-7xl font-clash font-bold text-text-light dark:text-text-dark leading-tight mb-4'>
               {nameArray.map((letter, index) => (
                 <motion.span
                   key={index}
@@ -60,7 +59,7 @@ const HeroSection: React.FC = () => {
                     ease: [0.215, 0.61, 0.355, 1],
                     delay: 0.5 + index * 0.04,
                   }}
-                  className='inline-block whitespace-nowrap'>
+                  className='inline-block'>
                   {letter === ' ' ? '\u00A0' : letter}
                 </motion.span>
               ))}
@@ -93,30 +92,20 @@ const HeroSection: React.FC = () => {
           </motion.div>
         </div>
       </div>
-
-      {/* Scroll down button */}
       <motion.div
-        className='absolute bottom-10 left-1/2 -translate-x-1/2 sm:left-10 sm:translate-x-0 md:left-20 lg:left-1/2 lg:-translate-x-1/2'
-        initial={{ opacity: 0, y: 20 }}
+        className='relative w-full flex justify-center cursor-pointer'
+        onClick={scrollToAbout}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1.2 }}>
-        <Link
-          to='about'
-          className='flex items-center gap-2 text-text-light dark:text-text-dark hover:text-primary-light dark:hover:text-primary-dark transition-colors cursor-pointer'
-          smooth={true}
-          duration={500}>
-          <motion.span
-            className='text-xs sm:text-sm md:text-base'
-            animate={{ y: [0, -5, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}>
-            Scroll Down
-          </motion.span>
-          <motion.div
-            animate={{ y: [0, 5, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}>
-            <ChevronDown className='w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5' />
-          </motion.div>
-        </Link>
+        transition={{ delay: 1.5, duration: 0.5 }}>
+        <motion.p className='text-sm text-secondary-light dark:text-secondary-dark mb-2'>
+          Scroll Down
+        </motion.p>
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}>
+          <ArrowDown className='w-5 h-5 text-primary-light dark:text-primary-dark' />
+        </motion.div>
       </motion.div>
     </section>
   );

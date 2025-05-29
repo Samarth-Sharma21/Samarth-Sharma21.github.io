@@ -5,8 +5,24 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        clash: ['Clash Display', 'sans-serif'],
-        inter: ['Inter', 'sans-serif'],
+        clash: [
+          'Space Grotesk',
+          'system-ui',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
+          'sans-serif',
+        ],
+        inter: [
+          'Inter',
+          'system-ui',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
+          'sans-serif',
+        ],
       },
       colors: {
         primary: {
