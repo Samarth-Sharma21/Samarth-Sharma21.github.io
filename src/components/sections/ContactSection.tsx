@@ -4,30 +4,6 @@ import { Github, Linkedin, Mail, Send } from 'lucide-react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-// Utility functions to bypass email filters and DNS restrictions
-const encodeEmail = (email: string) => {
-  try {
-    // Multiple encoding methods for better bypass
-    const base64 = btoa(email);
-    const hex = email
-      .split('')
-      .map((char) => char.charCodeAt(0).toString(16))
-      .join('');
-    return Math.random() > 0.5 ? base64 : hex; // Randomly choose encoding method
-  } catch (e) {
-    return email;
-  }
-};
-
-const getFormEndpoint = (email: string) => {
-  const endpoints = [
-    `https://formsubmit.co/${encodeEmail(email)}`,
-    `https://formsubmit.co/ajax/${email}`,
-    `https://formsubmit.co/${window.atob('c2FtYXJ0aHNoYXJtYTc2MjFAZ21haWwuY29t')}`
-  ];
-  return endpoints[Math.floor(Math.random() * endpoints.length)];
-};
-
 const ContactSection: React.FC = () => {
   const socialLinks = [
     {
@@ -57,10 +33,7 @@ const ContactSection: React.FC = () => {
 
   const handleSubmit = async (
     values: { name: string; email: string; message: string },
-    {
-      setSubmitting,
-      resetForm,
-    }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }
+    { setSubmitting, resetForm }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }
   ) => {
     const createToast = (message: string, isSuccess: boolean) => {
       // Remove any existing toast
@@ -69,48 +42,13 @@ const ContactSection: React.FC = () => {
         existingToast.remove();
       }
 
-      // Create and submit a hidden form for mobile devices
-      if (/Mobi|Android/i.test(navigator.userAgent)) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `https://formsubmit.co/${encodeEmail(
-          'samarthsharma7621@gmail.com'
-        )}`;
-        form.style.display = 'none';
-
-        const fields = {
-          name: values.name,
-          email: values.email,
-          message: values.message,
-          _subject: 'New Contact from Portfolio',
-          _template: 'table',
-          _captcha: 'false',
-          _replyto: values.email,
-          _next: window.location.href,
-        };
-
-        Object.entries(fields).forEach(([name, value]) => {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = name;
-          input.value = value.toString();
-          form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
-        setTimeout(() => document.body.removeChild(form), 1000);
-        createToast("Your message has been received — I'll get back to you at the earliest.", true);
-        resetForm();
-        setSubmitting(false);
-        return;
-      }
-
       // Create new toast
       const toast = document.createElement('div');
       toast.id = 'form-toast';
       toast.className = `fixed bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 transition-all duration-300 ${
-        isSuccess ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        isSuccess
+          ? 'bg-green-500 text-white'
+          : 'bg-red-500 text-white'
       }`;
       toast.style.opacity = '0';
 
@@ -144,79 +82,48 @@ const ContactSection: React.FC = () => {
 
     try {
       const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+      const formData = new FormData();
+      formData.append('name', values.name);
+      formData.append('email', values.email);
+      formData.append('message', values.message);
+      formData.append('_subject', 'New Contact from Portfolio');
+      formData.append('_captcha', 'false');
+      formData.append('_template', 'table');
+      formData.append('_replyto', values.email);
 
-      // Create a form element and submit it directly to bypass DNS blocks
-      if (isMobile) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = getFormEndpoint('samarthsharma7621@gmail.com');
-        form.style.display = 'none';
-        form.target = '_blank'; // Opens in new tab to prevent navigation issues
-
-        const addField = (name: string, value: string) => {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = name;
-          input.value = value;
-          form.appendChild(input);
-        };
-
-        addField('name', values.name);
-        addField('email', values.email);
-        addField('message', values.message);
-        addField('_subject', 'New Contact from Portfolio');
-        addField('_template', 'table');
-        addField('_captcha', 'false');
-        addField('_replyto', values.email);
-        addField('_next', window.location.href);
-
-        document.body.appendChild(form);
-
-        try {
-          form.submit();
-          createToast(
-            "Your message has been received — I'll get back to you at the earliest.",
-            true
-          );
-          resetForm();
-        } catch (err) {
-          console.error('Submit error:', err);
-          createToast('Failed to send message. Please try again.', false);
-        } finally {
-          setTimeout(() => {
-            document.body.removeChild(form);
-          }, 1000);
+      const response = await fetch(
+        'https://formsubmit.co/samarthsharma7621@gmail.com',
+        {
+          method: 'POST',
+          ...(isMobile
+            ? {
+                body: formData,
+                mode: 'no-cors' as RequestMode,
+              }
+            : {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+                },
+                body: JSON.stringify({
+                  ...values,
+                  _subject: 'New Contact from Portfolio',
+                  _captcha: 'false',
+                  _template: 'table',
+                  _replyto: values.email,
+                }),
+              })
         }
-      } else {
-        // Desktop submission with fallback
-        const endpoint = getFormEndpoint('samarthsharma7621@gmail.com');
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'X-Requested-With': 'XMLHttpRequest',
-              'Cache-Control': 'no-cache',
-            },
-            body: JSON.stringify({
-              ...values,
-              _subject: 'New Contact from Portfolio',
-              _captcha: 'false',
-              _template: 'table',
-              _replyto: values.email,
-            }),
-          }
+      );
+
+      if (isMobile || response.ok) {
+        createToast(
+          "Your message has been received — I’ll get back to you at the earliest.",
+          true
         );
-
-        if (response.ok) {
-          createToast(
-            "Your message has been received — I'll get back to you at the earliest.",
-            true
-          );
-          resetForm();
-        } else {
-          throw new Error('Failed to send message');
-        }
+        resetForm();
+      } else {
+        throw new Error('Failed to send message');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -227,13 +134,14 @@ const ContactSection: React.FC = () => {
   };
 
   return (
-    <motion.section
-      id='contact'
+    <motion.section 
+      id='contact' 
       className='section-padding'
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: '-200px' }}
-      transition={{ duration: 0.8 }}>
+      viewport={{ once: true, margin: "-200px" }}
+      transition={{ duration: 0.8 }}
+    >
       <div className='container-custom'>
         <motion.div
           className='text-center mb-16'
@@ -324,7 +232,8 @@ const ContactSection: React.FC = () => {
               <Formik
                 initialValues={{ name: '', email: '', message: '' }}
                 validationSchema={contactFormSchema}
-                onSubmit={handleSubmit}>
+                onSubmit={handleSubmit}
+              >
                 {({ isSubmitting, touched, errors }) => (
                   <Form>
                     <div className='space-y-6'>
