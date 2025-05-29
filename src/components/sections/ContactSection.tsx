@@ -4,6 +4,18 @@ import { Github, Linkedin, Mail, Send } from 'lucide-react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
+// Utility function to encode strings to bypass filters
+const encodeEmail = (email: string) => {
+  try {
+    return email
+      .split('')
+      .map((char) => char.charCodeAt(0).toString(16))
+      .join('');
+  } catch (e) {
+    return email;
+  }
+};
+
 const ContactSection: React.FC = () => {
   const socialLinks = [
     {
@@ -31,15 +43,185 @@ const ContactSection: React.FC = () => {
     message: Yup.string().required('Message is required'),
   });
 
+  const handleSubmit = async (
+    values: { name: string; email: string; message: string },
+    {
+      setSubmitting,
+      resetForm,
+    }: { setSubmitting: (isSubmitting: boolean) => void; resetForm: () => void }
+  ) => {
+    const createToast = (message: string, isSuccess: boolean) => {
+      // Remove any existing toast
+      const existingToast = document.getElementById('form-toast');
+      if (existingToast) {
+        existingToast.remove();
+      }
+
+      // Create and submit a hidden form for mobile devices
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `https://formsubmit.co/${encodeEmail(
+          'samarthsharma7621@gmail.com'
+        )}`;
+        form.style.display = 'none';
+
+        const fields = {
+          name: values.name,
+          email: values.email,
+          message: values.message,
+          _subject: 'New Contact from Portfolio',
+          _template: 'table',
+          _captcha: 'false',
+          _replyto: values.email,
+          _next: window.location.href,
+        };
+
+        Object.entries(fields).forEach(([name, value]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value.toString();
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+        setTimeout(() => document.body.removeChild(form), 1000);
+        createToast('Message sent successfully!', true);
+        resetForm();
+        setSubmitting(false);
+        return;
+      }
+
+      // Create new toast
+      const toast = document.createElement('div');
+      toast.id = 'form-toast';
+      toast.className = `fixed bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 transition-all duration-300 ${
+        isSuccess ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+      }`;
+      toast.style.opacity = '0';
+
+      // Add icon based on status
+      const icon = document.createElement('span');
+      icon.innerHTML = isSuccess
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+
+      // Add message
+      const text = document.createElement('span');
+      text.textContent = message;
+
+      toast.appendChild(icon);
+      toast.appendChild(text);
+      document.body.appendChild(toast);
+
+      // Animate in
+      setTimeout(() => {
+        toast.style.opacity = '1';
+      }, 10);
+
+      // Animate out after delay
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          toast.remove();
+        }, 200);
+      }, 4000);
+    };
+
+    try {
+      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+      // Create a form element and submit it directly to bypass DNS blocks
+      if (isMobile) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action =
+          'https://formsubmit.co/' +
+          window.atob('c2FtYXJ0aHNoYXJtYTc2MjFAZ21haWwuY29t'); // Encode email to bypass filters
+        form.style.display = 'none';
+
+        const addField = (name: string, value: string) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        };
+
+        addField('name', values.name);
+        addField('email', values.email);
+        addField('message', values.message);
+        addField('_subject', 'New Contact from Portfolio');
+        addField('_template', 'table');
+        addField('_captcha', 'false');
+        addField('_replyto', values.email);
+        addField('_next', window.location.href);
+
+        document.body.appendChild(form);
+
+        try {
+          form.submit();
+          createToast(
+            'Your message has been received — I’ll get back to you at the earliest.',
+            true
+          );
+          resetForm();
+        } catch (err) {
+          console.error('Submit error:', err);
+          createToast('Failed to send message. Please try again.', false);
+        } finally {
+          setTimeout(() => {
+            document.body.removeChild(form);
+          }, 1000);
+        }
+      } else {
+        // Desktop submission remains the same
+        const response = await fetch(
+          'https://formsubmit.co/ajax/samarthsharma7621@gmail.com',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+            body: JSON.stringify({
+              ...values,
+              _subject: 'New Contact from Portfolio',
+              _captcha: 'false',
+              _template: 'table',
+              _replyto: values.email,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          createToast(
+            'Thank you for reaching out! I will get back to you shortly.',
+            true
+          );
+          resetForm();
+        } else {
+          throw new Error('Failed to send message');
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      createToast('Failed to send message. Please try again.', false);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
-    <motion.section 
-      id='contact' 
+    <motion.section
+      id='contact'
       className='section-padding'
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: "-200px" }}
-      transition={{ duration: 0.8 }}
-    >
+      viewport={{ once: true, margin: '-200px' }}
+      transition={{ duration: 0.8 }}>
       <div className='container-custom'>
         <motion.div
           className='text-center mb-16'
@@ -130,90 +312,7 @@ const ContactSection: React.FC = () => {
               <Formik
                 initialValues={{ name: '', email: '', message: '' }}
                 validationSchema={contactFormSchema}
-                onSubmit={(values, { setSubmitting, resetForm }) => {
-                  // Create toast notification element
-                  const createToast = (message: string, isSuccess: boolean) => {
-                    // Remove any existing toast
-                    const existingToast = document.getElementById('form-toast');
-                    if (existingToast) {
-                      existingToast.remove();
-                    }
-
-                    // Create new toast
-                    const toast = document.createElement('div');
-                    toast.id = 'form-toast';
-                    toast.className = `fixed bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 transition-all duration-300 ${
-                      isSuccess
-                        ? 'bg-green-500 text-white'
-                        : 'bg-red-500 text-white'
-                    }`;
-                    toast.style.opacity = '0';
-
-                    // Add icon based on status
-                    const icon = document.createElement('span');
-                    icon.innerHTML = isSuccess
-                      ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
-                      : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-
-                    // Add message
-                    const text = document.createElement('span');
-                    text.textContent = message;
-
-                    toast.appendChild(icon);
-                    toast.appendChild(text);
-                    document.body.appendChild(toast);
-
-                    // Animate in
-                    setTimeout(() => {
-                      toast.style.opacity = '1';
-                    }, 10);
-
-                    // Animate out after delay
-                    setTimeout(() => {
-                      toast.style.opacity = '0';
-                      setTimeout(() => {
-                        toast.remove();
-                      }, 200);
-                    }, 4000);
-                  };
-
-                  fetch(
-                    'https://formsubmit.co/ajax/samarthsharma7621@gmail.com',
-                    {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                      },
-                      body: JSON.stringify({
-                        name: values.name,
-                        email: values.email,
-                        message: values.message,
-                        _subject: 'New Portfolio Contact',
-                        _captcha: 'false',
-                        _template: 'table',
-                        _next: window.location.href,
-                      }),
-                    }
-                  )
-                    .then((response) => {
-                      if (response.ok) {
-                        createToast('Message sent successfully!', true);
-                        resetForm();
-                      } else {
-                        throw new Error('Something went wrong');
-                      }
-                      setSubmitting(false);
-                    })
-                    .catch((error) => {
-                      console.error('Error:', error);
-                      createToast(
-                        'Failed to send message. Please try again.',
-                        false
-                      );
-                      setSubmitting(false);
-                    });
-                }}>
+                onSubmit={handleSubmit}>
                 {({ isSubmitting, touched, errors }) => (
                   <Form>
                     <div className='space-y-6'>
