@@ -48,7 +48,7 @@ const HeroSection: React.FC = () => {
               Hello, I'm
             </motion.p>
 
-            <motion.h1 className='text-5xl md:text-6xl lg:text-7xl font-clash font-bold text-text-light dark:text-text-dark leading-tight mb-4'>
+            <motion.h1 className='text-4xl md:text-6xl lg:text-7xl font-clash font-bold text-text-light dark:text-text-dark leading-tight mb-4'>
               {nameArray.map((letter, index) => (
                 <motion.span
                   key={index}

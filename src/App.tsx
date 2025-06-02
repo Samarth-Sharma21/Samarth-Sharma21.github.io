@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import HomePage from './pages/HomePage';
+import ProjectsPage from './pages/ProjectsPage';
 import ScrollToTop from './components/utils/ScrollToTop';
 import { ThemeProvider } from './contexts/ThemeContext';
 
@@ -39,7 +40,10 @@ function App() {
         <div className='relative'>
           <Header />
           <main>
-            <HomePage />
+            <Routes>
+              <Route path='/' element={<HomePage />} />
+              <Route path='/projects' element={<ProjectsPage />} />
+            </Routes>
           </main>
           <Footer />
         </div>

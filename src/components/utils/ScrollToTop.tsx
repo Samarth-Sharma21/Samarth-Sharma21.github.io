@@ -5,6 +5,9 @@ const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    // Skip scroll if navigating to projects page
+    if (pathname === '/projects') return;
+
     // If there's a hash, scroll to that element
     if (hash) {
       const element = document.querySelector(hash);
