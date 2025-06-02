@@ -6,11 +6,11 @@ export const projects: Project[] = [
     description:
       'Memory-sharing app for dementia patients with collaborative family features.',
     tech: ['React', 'Node.js', 'Supabase'],
-    image: 'public/Rekindle2.JPG',
+    image: '/Rekindle2.JPG',
     images: [
-      'public/Rekindle1.JPG',
-      'public/Rekindle2.JPG',
-      'public/Rekindle3.JPG',
+      '/Rekindle1.JPG',
+      '/Rekindle2.JPG',
+      '/Rekindle3.JPG',
     ],
     github: 'https://github.com/Samarth-Sharma21/ReKindle',
     demo: 'https://samarth-sharma21.github.io/ReKindle',
@@ -20,8 +20,8 @@ export const projects: Project[] = [
     description:
       'A real-time multiplayer Wordle game built with React and Vite. Create or join rooms and race to guess the word first — no login required.',
     tech: ['React', 'WebRTC'],
-    image: 'public/Wordle1.JPG',
-    images: ['public/Wordle1.JPG', 'public/Wordle2.JPG', 'public/Wordle3.JPG'],
+    image: '/Wordle1.JPG',
+    images: ['/Wordle1.JPG', '/Wordle2.JPG', '/Wordle3.JPG'],
     github: 'https://github.com/Samarth-Sharma21/WordleParty',
     demo: 'https://samarth-sharma21.github.io/WordleParty',
   },
@@ -45,10 +45,10 @@ export const projects: Project[] = [
     description:
       'This project was created to provide you with a random, inspiring quote at the click of a button. Whether you need some motivation, wisdom, or just a thoughtful reflection, this tool has you covered.',
     tech: ['Html', 'CSS', 'Javascript'],
-    image: 'public/Quote1.JPG',
+    image: '/Quote1.JPG',
     images: [
-      'public/Quote1.JPG',
-      'public/Quote2.JPG',
+      '/Quote1.JPG',
+      '/Quote2.JPG',
     ],
     github: 'https://github.com/Samarth-Sharma21/portfolio',
     demo: 'https://samarth-sharma.dev',
