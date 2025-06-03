@@ -31,7 +31,7 @@ export const projects: Project[] = [
       'Currently working on this project.',
     tech: ['React', 'Llama Api'],
     image:
-      '/AiTherapist1.JPG',
+      '/AiTherpist1.JPG',
     images: [
       '/AiTherapist1.JPG',
       '/AiTherapist2.JPG'],
