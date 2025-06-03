@@ -26,19 +26,17 @@ export const projects: Project[] = [
     demo: 'https://samarth-sharma21.github.io/WordleParty',
   },
   {
-    title: 'E-Commerce Platform',
+    title: 'Ai Therapist',
     description:
-      'Fully featured online store with product catalog and payment integration.',
-    tech: ['React', 'Node.js', 'MongoDB'],
+      'Currently working on this project.',
+    tech: ['React', 'Llama Api'],
     image:
-      'https://images.pexels.com/photos/5076516/pexels-photo-5076516.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+      '/AiTherapist1.JPG',
     images: [
-      'https://images.pexels.com/photos/5076516/pexels-photo-5076516.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      'https://images.pexels.com/photos/4968391/pexels-photo-4968391.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    ],
-    github: 'https://github.com/Samarth-Sharma21/ecommerce-platform',
-    demo: 'https://samarth-ecommerce.netlify.app',
+      '/AiTherapist1.JPG',
+      '/AiTherapist2.JPG'],
+    github: 'https://github.com/Samarth-Sharma21/AI_Therapist',
+    demo: '',
   },
   {
     title: 'Quote Generator',
@@ -54,23 +52,13 @@ export const projects: Project[] = [
     demo: 'https://samarth-sharma.dev',
   },
   {
-    title: 'Weather Dashboard',
+    title: 'Sign Language Detection',
     description:
-      'Real-time weather tracking with location-based forecasts and visualization.',
-    tech: ['React', 'Node.js', 'Chart.js'],
+      'This project uses a Multi-Layer Perceptron (MLP) model to detect Sign language. It is trained on the a custom dataset.',
+    tech: ['Pythin', 'MediaPipe', 'TensorFlow'],
     image:
-      'https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    github: 'https://github.com/Samarth-Sharma21/weather-app',
-    demo: 'https://samarth-weather.netlify.app',
-  },
-  {
-    title: 'Task Management App',
-    description:
-      'Collaborative todo application with team features and deadline tracking.',
-    tech: ['React', 'Firebase', 'Redux'],
-    image:
-      'https://images.pexels.com/photos/3243/pen-calendar-to-do-checklist.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    github: 'https://github.com/Samarth-Sharma21/task-manager',
-    demo: 'https://samarth-tasks.web.app',
+      '',
+    github: 'https://github.com/Samarth-Sharma21/SignLanguageDetection',
+    demo: '',
   },
 ];
