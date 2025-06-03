@@ -55,7 +55,7 @@ export const projects: Project[] = [
     title: 'Sign Language Detection',
     description:
       'This project uses a Multi-Layer Perceptron (MLP) model to detect Sign language. It is trained on the a custom dataset.',
-    tech: ['Pythin', 'MediaPipe', 'TensorFlow'],
+    tech: ['Python', 'MediaPipe', 'TensorFlow'],
     image:
       '',
     github: 'https://github.com/Samarth-Sharma21/SignLanguageDetection',
