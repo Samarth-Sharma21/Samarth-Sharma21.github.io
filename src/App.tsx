@@ -23,7 +23,8 @@ function App() {
   if (loading) {
     return (
       <div className='min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark'>
-        <div className='text-center'>          <div className='mb-2 flex justify-center overflow-hidden'>
+        <div className='text-center'>
+          <div className='mb-2 flex justify-center overflow-hidden'>
             {nameArray.map((letter, index) => (
               <motion.span
                 key={index}
