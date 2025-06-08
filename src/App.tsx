@@ -28,7 +28,7 @@ function App() {
             {nameArray.map((letter, index) => (
               <motion.span
                 key={index}
-                className={`inline-block text-5xl md:text-6xl font-clash font-bold text-primary-light dark:text-primary-dark`}
+                className={`inline-block text-4xl md:text-5xl font-clash font-bold text-primary-light dark:text-primary-dark`}
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{
