@@ -47,7 +47,7 @@ const SkillsSection: React.FC = () => {
   return (
     <motion.section 
       id="skills" 
-      className="section-padding bg-gray-50 dark:bg-gray-900"
+      className="section-padding bg-gray-50 dark:bg-gray-900 select-none"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-200px" }}

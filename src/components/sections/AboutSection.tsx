@@ -5,7 +5,7 @@ const AboutSection: React.FC = () => {
   const profileImageUrl = '/me.jpeg';
 
   return (
-    <section id='about' className='section-padding bg-gray-50 dark:bg-gray-900'>
+    <section id='about' className='section-padding bg-gray-50 dark:bg-gray-900 select-none'>
       <div className='container-custom'>
         <motion.div
           className='text-center mb-16'

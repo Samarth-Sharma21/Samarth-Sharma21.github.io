@@ -12,7 +12,7 @@ const ProjectsSection: React.FC = () => {
   return (
     <motion.section 
       id="projects" 
-      className="section-padding"
+      className="section-padding select-none"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-200px" }}

@@ -57,7 +57,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
   return (
     <motion.div
-      className='card h-full flex flex-col overflow-hidden group relative'
+      className='card h-full flex flex-col overflow-hidden group relative select-none'
       whileHover={{ y: -5 }}
       transition={{ duration: 0.3 }}
       onMouseEnter={() => setIsHovered(true)}

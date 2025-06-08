@@ -29,8 +29,7 @@ const HeroSection: React.FC = () => {
 
   const nameArray = 'Samarth Sharma'.split('');
 
-  return (
-    <section className='relative min-h-screen flex flex-col justify-between pt-20 pb-16 select-none'>
+  return (    <section className='relative min-h-screen flex flex-col justify-between pt-20 pb-16 select-none'>
       {' '}
       <div className='absolute inset-0 overflow-hidden'>
         <FloatingElements marginTop={80} />

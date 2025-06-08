@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className='py-8 bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800'>
+    <footer className='py-8 bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 select-none'>
       <div className='container-custom'>
         <div className='flex flex-col md:flex-row justify-between items-center'>
           <div>

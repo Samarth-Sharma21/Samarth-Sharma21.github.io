@@ -136,7 +136,7 @@ const ContactSection: React.FC = () => {
   return (
     <motion.section 
       id='contact' 
-      className='section-padding'
+      className='section-padding select-none'
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-200px" }}
