@@ -97,18 +97,18 @@ const SkillsSection: React.FC = () => {
         
         {/* Tabs - Improved for mobile */}
         <motion.div 
-          className="flex justify-center mb-8 overflow-x-auto pb-2 px-2 -mx-2"
+          className="flex justify-center mb-8 overflow-x-auto scrollbar-hide pb-4 px-4 -mx-2 w-full"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <div className="inline-flex p-1 rounded-xl bg-gray-200 dark:bg-gray-800 flex-nowrap">
+          <div className="inline-flex p-1 rounded-xl bg-gray-200 dark:bg-gray-800 flex-nowrap max-w-full mx-auto">
             {tabs.map((tab, index) => (
               <motion.button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative px-3 sm:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`relative px-2 sm:px-4 md:px-6 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'text-text-light dark:text-text-dark'
                     : 'text-secondary-light dark:text-secondary-dark hover:text-text-light dark:hover:text-text-dark'

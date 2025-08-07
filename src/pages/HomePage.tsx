@@ -2,8 +2,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import HeroSection from '../components/sections/HeroSection';
 import AboutSection from '../components/sections/AboutSection';
-import ProjectsSection from '../components/sections/ProjectsSection';
 import SkillsSection from '../components/sections/SkillsSection';
+import ExperienceSection from '../components/sections/ExperienceSection';
+import ProjectsSection from '../components/sections/ProjectsSection';
 import ContactSection from '../components/sections/ContactSection';
 
 const HomePage: React.FC = () => {
@@ -16,8 +17,9 @@ const HomePage: React.FC = () => {
     >
       <HeroSection />
       <AboutSection />
-      <ProjectsSection />
       <SkillsSection />
+      <ExperienceSection />
+      <ProjectsSection />
       <ContactSection />
     </motion.div>
   );

@@ -42,13 +42,35 @@ const Header: React.FC = () => {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
+  
+  // Handle smooth scrolling for mobile menu links
+  const handleMobileNavClick = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    if (path.startsWith('/#')) {
+      e.preventDefault();
+      const targetId = path.substring(2);
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        // Close menu first
+        setIsOpen(false);
+        
+        // Then scroll after a short delay to allow menu animation to complete
+        setTimeout(() => {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      }
+    } else {
+      // For non-hash links, just close the menu
+      setIsOpen(false);
+    }
+  };
   // Track current section based on scroll position
   const [activeSection, setActiveSection] = useState('/');
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['about', 'projects', 'skills', 'contact'];
-      const scrollPosition = window.scrollY + 100;
+      const sections = ['about', 'skills', 'experience', 'projects', 'contact'];
+      const scrollPosition = window.scrollY + 150; // Increased offset for better detection
 
       // Check if we're at the top of the page
       if (window.scrollY < 100) {
@@ -56,17 +78,38 @@ const Header: React.FC = () => {
         return;
       }
 
+      // Find the section that takes up the most space in the viewport
+      let maxVisibleSection = null;
+      let maxVisibleHeight = 0;
+
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
-          const offsetTop = element.offsetTop;
-          const offsetBottom = offsetTop + element.offsetHeight;
+          const rect = element.getBoundingClientRect();
+          const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+          
+          // Only consider elements that are actually visible in the viewport
+          if (visibleHeight > 0 && visibleHeight > maxVisibleHeight) {
+            maxVisibleHeight = visibleHeight;
+            maxVisibleSection = section;
+          }
 
-          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
-            setActiveSection(`/#${section}`);
-            break;
+          // Fallback to traditional position-based detection
+          if (!maxVisibleSection) {
+            const offsetTop = element.offsetTop;
+            const offsetBottom = offsetTop + element.offsetHeight;
+
+            if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+              setActiveSection(`/#${section}`);
+              return;
+            }
           }
         }
+      }
+
+      // Set the section with maximum visibility as active
+      if (maxVisibleSection) {
+        setActiveSection(`/#${maxVisibleSection}`);
       }
     };
 
@@ -85,8 +128,9 @@ const Header: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/#about' },
-    { name: 'Projects', path: '/#projects' },
     { name: 'Skills', path: '/#skills' },
+    { name: 'Experience', path: '/#experience' },
+    { name: 'Projects', path: '/#projects' },
     { name: 'Contact', path: '/#contact' },
   ];
 
@@ -215,7 +259,7 @@ const Header: React.FC = () => {
       </div>
 
       {/* Mobile Navigation */}
-      <AnimatePresence>
+      <AnimatePresence mode='wait'>
         {isOpen && (
           <motion.div
             className='md:hidden fixed inset-0 z-[99]'
@@ -268,7 +312,7 @@ const Header: React.FC = () => {
                           ? 'text-primary-light dark:text-primary-dark font-semibold'
                           : 'text-text-light dark:text-text-dark'
                       }`}
-                      onClick={closeMenu}>
+                      onClick={(e) => handleMobileNavClick(e, link.path)}>
                       {link.name}
                       {isCurrentlyActive(link.path) && (
                         <motion.span

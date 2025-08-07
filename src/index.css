@@ -7,7 +7,9 @@
 
 :root {
   --color-primary-light: #0563bb;
+  --color-primary-light-rgb: 5, 99, 187;
   --color-primary-dark: #0563bb;
+  --color-primary-dark-rgb: 5, 99, 187;
   --color-background-light: #ffffff;
   --color-background-dark: #141e30;
   --color-text-light: #1a1a1a;
@@ -16,6 +18,16 @@
   --color-secondary-dark: #b0b0b0;
   --color-accent-light: #3182ce;
   --color-accent-dark: #d32f2f;
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
 }
 
 @layer base {

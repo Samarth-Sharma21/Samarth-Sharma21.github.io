@@ -97,15 +97,16 @@ const HeroSection: React.FC = () => {
         </div>
       </div>
       <motion.div
-        className='relative w-full flex flex-col items-center cursor-pointer'
+        className='relative w-full flex flex-col items-center cursor-pointer mb-4 md:mb-0'
         onClick={scrollToAbout}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 0.5 }}>
         <motion.div
-          className='flex flex-col items-center'
+          className='flex flex-col items-center mb-4 md:mb-0'
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}>
+          
           <motion.p className='text-sm text-secondary-light dark:text-secondary-dark mb-2'>
             Scroll Down
           </motion.p>
