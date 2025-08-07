@@ -16,6 +16,20 @@ export const projects: Project[] = [
     demo: 'https://samarth-sharma21.github.io/ReKindle',
   },
   {
+    title: 'Github Profile Readme Generator',
+    description:
+      'Fast and smart way to create and customize your GitHub Profile README — with live preview, icons, stats, and more!',
+    tech: ['React', 'Javascript'],
+    image: '/Smart_gh_generator1.png',
+    images: [
+      '/Smart_gh_generator1.png',
+      '/Smart_gh_generator2.png',
+      '/Smart_gh_generator3.png',
+    ],
+    github: 'https://github.com/Samarth-Sharma21/Smart-github-profile-readme-generator.git',
+    demo: 'https://smart-github-profile-readme-generator.netlify.app/',
+  },
+  {
     title: 'WordleParty',
     description:
       'A real-time multiplayer Wordle game built with React and Vite. Create or join rooms and race to guess the word first — no login required.',
