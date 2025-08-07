@@ -69,7 +69,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['about', 'skills', 'projects', 'contact'];
+      const sections = ['about', 'skills', 'experience', 'projects', 'contact'];
       const scrollPosition = window.scrollY + 150; // Increased offset for better detection
 
       // Check if we're at the top of the page
@@ -129,6 +129,7 @@ const Header: React.FC = () => {
     { name: 'Home', path: '/' },
     { name: 'About', path: '/#about' },
     { name: 'Skills', path: '/#skills' },
+    { name: 'Experience', path: '/#experience' },
     { name: 'Projects', path: '/#projects' },
     { name: 'Contact', path: '/#contact' },
   ];
