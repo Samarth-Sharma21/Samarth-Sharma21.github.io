@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, Send } from 'lucide-react';
+import { Github, Linkedin, Mail, Send, Coffee } from 'lucide-react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
@@ -20,6 +20,11 @@ const ContactSection: React.FC = () => {
       name: 'Email',
       url: 'https://mail.google.com/mail/?view=cm&fs=1&to=samarthsharma7621@gmail.com',
       icon: <Mail className='w-5 h-5' />,
+    },
+    {
+      name: 'Buy Me a Coffee',
+      url: 'https://www.buymeacoffee.com/samarthsharma',
+      icon: <Coffee className='w-5 h-5' />,
     },
   ];
 

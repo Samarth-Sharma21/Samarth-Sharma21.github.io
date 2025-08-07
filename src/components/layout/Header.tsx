@@ -69,7 +69,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['about', 'skills', 'experience', 'projects', 'contact'];
+      const sections = ['about', 'skills', 'projects', 'contact'];
       const scrollPosition = window.scrollY + 150; // Increased offset for better detection
 
       // Check if we're at the top of the page
@@ -129,7 +129,6 @@ const Header: React.FC = () => {
     { name: 'Home', path: '/' },
     { name: 'About', path: '/#about' },
     { name: 'Skills', path: '/#skills' },
-    { name: 'Experience', path: '/#experience' },
     { name: 'Projects', path: '/#projects' },
     { name: 'Contact', path: '/#contact' },
   ];
@@ -182,7 +181,7 @@ const Header: React.FC = () => {
       <div className='container-custom flex justify-between items-center relative z-[101]'>
         <Link to='/' className='flex items-center' onClick={closeMenu}>
           <motion.div
-            className='font-clash text-2xl font-bold text-primary-light dark:text-primary-dark'
+            className='font-clash text-2xl font-bold text-primary-light dark:text-white'
             whileHover={{ scale: 1.05 }}
             transition={{ type: 'spring', stiffness: 300 }}>
             Samarth Sharma
