@@ -23,7 +23,7 @@ const ContactSection: React.FC = () => {
     },
     {
       name: 'Buy Me a Coffee',
-      url: 'https://www.buymeacoffee.com/samarthsharma',
+      url: 'https://www.buymeacoffee.com/Samarthsharma21',
       icon: <Coffee className='w-5 h-5' />,
     },
   ];
