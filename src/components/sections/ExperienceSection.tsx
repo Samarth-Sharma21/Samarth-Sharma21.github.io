@@ -23,7 +23,7 @@ const ExperienceSection: React.FC = () => {
   const experiences = [
     {
       id: 1,
-      title: 'DevOps Engineer',
+      title: 'DevOps Engineer Intern',
       company: 'Paytm',
       duration: 'June 2025 - Present',
       location: 'Noida, India',
