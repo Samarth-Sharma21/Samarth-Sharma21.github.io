@@ -1,7 +1,7 @@
-import React, { useRef, useMemo, useState, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useTheme } from '../../contexts/ThemeContext';
-import * as THREE from 'three';
+import React, { useRef, useMemo, useState, useEffect } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useTheme } from "../../contexts/ThemeContext";
+import * as THREE from "three";
 
 interface FloatingLogoProps {
   position: [number, number, number];
@@ -125,8 +125,8 @@ const FloatingElements: React.FC<FloatingElementsProps> = ({
         height: window.innerHeight,
       });
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const isMobile = windowSize.width < 768;
@@ -138,32 +138,38 @@ const FloatingElements: React.FC<FloatingElementsProps> = ({
   const cameraFov = isMobile ? 80 : 60;
 
   const logosData = [
-    'python',
-    'java',
-    'javascript',
-    'typescript',
-    'nodejs',
-    'react',
-    'nextjs',
-    'mysql',
-    'mongodb',
-    'postgresql',
-    'github',
-    'git',
-    'docker',
-    'kubernetes',
-    'jenkins',
-    'prometheus',
-    'grafana',
-    'elasticsearch', // for Kibana
-    'ansible',
-    'terraform',
-    'amazonwebservices',
-    'azure',
-    'googlecloud',
+    "python",
+    "java",
+    "javascript",
+    "typescript",
+    "nodejs",
+    "react",
+    "nextjs",
+    "mysql",
+    "mongodb",
+    "postgresql",
+    "github",
+    "git",
+    "docker",
+    "podman",
+    "kubernetes",
+    "jenkins",
+    "kafka",
+    "prometheus",
+    "grafana",
+    "elasticsearch", // for Kibana
+    "ansible",
+    "terraform",
+    "amazonwebservices",
+    "azure",
+    "googlecloud",
   ].map((name) => ({
     imageUrl: `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${name}/${name}-original.svg`,
-    rotation: [Math.random() * 0.5, Math.random() * 0.5, Math.random() * 0.5] as [number, number, number],
+    rotation: [
+      Math.random() * 0.5,
+      Math.random() * 0.5,
+      Math.random() * 0.5,
+    ] as [number, number, number],
     speed: 0.3 + Math.random() * 0.4,
   }));
   const logosWithPosition = useMemo(() => {
@@ -194,19 +200,20 @@ const FloatingElements: React.FC<FloatingElementsProps> = ({
   return (
     <Canvas
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: marginTop,
         left: 0,
-        width: '100%',
+        width: "100%",
         height: `${heroHeight - marginTop}px`,
-        background: theme === 'dark' ? '#0b0b0b' : '#ffffff',
-        touchAction: 'none',
+        background: theme === "dark" ? "#0b0b0b" : "#ffffff",
+        touchAction: "none",
       }}
       camera={{ position: cameraPosition, fov: cameraFov }}
-      dpr={[1, 2]}>
+      dpr={[1, 2]}
+    >
       <ambientLight intensity={0.7} />
       <directionalLight position={[10, 10, 5]} intensity={0.6} />
-      <pointLight position={[-10, -10, -10]} intensity={0.5} color='#0563bb' />
+      <pointLight position={[-10, -10, -10]} intensity={0.5} color="#0563bb" />
       {logosWithPosition.map((logo, index) => (
         <FloatingLogo key={index} {...logo} />
       ))}
