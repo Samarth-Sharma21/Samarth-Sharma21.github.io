@@ -160,7 +160,7 @@ const FloatingElements: React.FC<FloatingElementsProps> = ({
     "elasticsearch", // for Kibana
     "ansible",
     "terraform",
-    "amazonwebservices",
+    "aws",
     "azure",
     "googlecloud",
   ].map((name) => ({
