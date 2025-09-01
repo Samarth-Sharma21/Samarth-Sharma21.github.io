@@ -53,17 +53,17 @@ export const projects: Project[] = [
     demo: '',
   },
   {
-    title: 'Quote Generator',
+    title: 'TTS-STT conversion',
     description:
-      'This project was created to provide you with a random, inspiring quote at the click of a button. Whether you need some motivation, wisdom, or just a thoughtful reflection, this tool has you covered.',
-    tech: ['Html', 'CSS', 'Javascript'],
-    image: '/Quote1.JPG',
+      'A comprehensive Python desktop application that provides both Text-to-Speech (TTS) and Speech-to-Text (STT) functionality with a clean, user-friendly graphical interface.',
+    tech: ['Python', 'pyttsx3', 'SpeechRecognition', 'tkinter'],
+    image:
+      '/tts_stt1.png',
     images: [
-      '/Quote1.JPG',
-      '/Quote2.JPG',
-    ],
-    github: 'https://github.com/Samarth-Sharma21/portfolio',
-    demo: 'https://samarth-sharma.dev',
+      '/tts_stt1.png',
+      '/tts_stt2.png'],
+    github: 'https://github.com/Samarth-Sharma21/tts_stt_project.git',
+    demo: '',
   },
   {
     title: 'Sign Language Detection',
@@ -74,5 +74,18 @@ export const projects: Project[] = [
       '',
     github: 'https://github.com/Samarth-Sharma21/SignLanguageDetection',
     demo: '',
+  },
+  {
+    title: 'Quote Generator',
+    description:
+      'This project was created to provide you with a random, inspiring quote at the click of a button. Whether you need some motivation, wisdom, or just a thoughtful reflection, this tool has you covered.',
+    tech: ['Html', 'CSS', 'Javascript'],
+    image: '/Quote1.JPG',
+    images: [
+      '/Quote1.JPG',
+      '/Quote2.JPG',
+    ],
+    github: 'https://github.com/Samarth-Sharma21/Quote-Generator',
+    demo: 'https://samarth-sharma21.github.io/Quote-Generator/',
   },
 ];
