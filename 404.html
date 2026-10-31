@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Loading portfolio</title>
+    <script>
+      const destination = new URL('/', location.origin);
+      destination.searchParams.set('portfolio-route', location.pathname + location.search + location.hash);
+      location.replace(destination.href);
+    </script>
+  </head>
+  <body>Loading portfolio...</body>
+</html>
