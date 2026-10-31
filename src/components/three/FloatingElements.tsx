@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../contexts/theme";
 import * as THREE from "three";
 
 interface FloatingLogoProps {

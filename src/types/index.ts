@@ -1,9 +1,14 @@
+export type ProjectCategory = 'web' | 'ai' | 'tools';
+
 export interface Project {
+  id: string;
   title: string;
   description: string;
-  tech: string[];
-  image: string;
-  images?: string[]; // Optional array for slideshow
+  tech: readonly string[];
+  image: string | null;
+  images: readonly string[];
   github: string;
-  demo: string;
+  demo: string | null;
+  featured: boolean;
+  category: ProjectCategory;
 }

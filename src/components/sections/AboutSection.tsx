@@ -1,103 +1,14 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
+import SkillsSection from './SkillsSection';
 
-const AboutSection: React.FC = () => {
-  const profileImageUrl = '/me.jpeg';
-
+export default function AboutSection() {
   return (
-    <section id='about' className='section-padding bg-gray-50 dark:bg-gray-900 select-none'>
-      <div className='container-custom'>
-        <motion.div
-          className='text-center mb-16'
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6 }}>
-          <h2 className='text-text-light dark:text-text-dark font-clash font-bold'>
-            About Me
-          </h2>
-          <div className='w-20 h-1 bg-primary-light dark:bg-primary-dark mx-auto mt-4 rounded-full'></div>
-        </motion.div>
-
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-12 items-center'>
-          <motion.div
-            className='relative flex justify-center'
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.8 }}>
-            <div
-              className='relative w-full max-w-md rounded-2xl mx-auto
-                before:absolute before:inset-0 before:rounded-2xl 
-                before:bg-[radial-gradient(circle,_rgba(96,165,250,0.6)_0%,_transparent_70%)] 
-                dark:before:bg-[radial-gradient(circle,_rgba(168,85,247,0.4)_0%,_transparent_70%)]
-                before:blur-2xl before:z-[-1]'>
-              <img
-                src={profileImageUrl}
-                alt='Samarth Sharma'
-                className='rounded-2xl shadow-lg w-full h-auto object-cover'
-              />
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.8, delay: 0.2 }}>
-            <h3 className='text-2xl md:text-3xl font-clash font-semibold text-text-light dark:text-text-dark mb-4'>
-              I'm a passionate developer and AI enthusiast
-            </h3>
-
-            <p className='text-secondary-light dark:text-secondary-dark mb-6'>
-              I'm a developer focused on building thoughtful, intelligent, and
-              impactful experiences across web and AI technologies. With a
-              passion for creating elegant solutions to complex problems, I
-              strive to make technology more accessible and user-friendly.
-            </p>
-
-            <p className='text-secondary-light dark:text-secondary-dark mb-8'>
-              My journey in tech has led me to explore various domains including 
-              devops, web development, machine learning, and user experience design. I'm
-              constantly learning and experimenting with new technologies to
-              expand my skillset and create better digital experiences.
-            </p>
-
-            <div className='grid grid-cols-2 gap-6'>
-              <div>
-                <h4 className='text-lg font-semibold text-text-light dark:text-text-dark mb-2'>
-                  Education
-                </h4>
-                <p className='text-secondary-light dark:text-secondary-dark'>
-                  B.Tech in Computer Science
-                </p>
-              </div>
-
-              <div>
-                <h4 className='text-lg font-semibold text-text-light dark:text-text-dark mb-2'>
-                  Location
-                </h4>
-                <p className='text-secondary-light dark:text-secondary-dark'>
-                  Mumbai, India
-                </p>
-              </div>
-
-              <div>
-                <h4 className='text-lg font-semibold text-text-light dark:text-text-dark mb-2'>
-                  Interests
-                </h4>
-                <p className='text-secondary-light dark:text-secondary-dark'>
-                  AI, Web Development, DevOps
-                </p>
-              </div>
-
-              <div>{/* Reserved for Experience */}</div>
-            </div>
-          </motion.div>
-        </div>
+    <section id="about" className="about-section section-space container-custom" tabIndex={-1}>
+      <div className="section-heading"><div><h2>A little about me.</h2></div><p>I like understanding how things work.<br />Then finding a way to make them better.</p></div>
+      <div className="about-grid">
+        <div className="portrait-frame"><img src="/me.jpeg" alt="Samarth Sharma" loading="lazy" width="720" height="900" draggable={false} /><div className="portrait-caption"><span>Samarth Sharma</span><span>Noida, India</span></div></div>
+        <div className="about-copy"><p className="about-lead">From infrastructure to the interface.</p><p>My work brings together web development, cloud infrastructure, and a growing interest in AI. I enjoy the whole process, from a first rough idea to the details that make a product useful.</p><p>I'm based in Noida, with a background in computer science. Outside my day-to-day work in DevOps, personal projects give me room to experiment, ask questions, and keep learning.</p><a href="https://github.com/Samarth-Sharma21" className="text-link" target="_blank" rel="noopener noreferrer">Follow the work on GitHub <ArrowUpRight size={16} /></a><SkillsSection /></div>
       </div>
     </section>
   );
-};
-
-export default AboutSection;
+}

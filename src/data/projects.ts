@@ -1,91 +1,94 @@
-import { Project } from '../types';
+import type { Project, ProjectCategory } from '../types';
 
-export const projects: Project[] = [
+export const projectCategories: ReadonlyArray<{ id: ProjectCategory; label: string }> = [
+  { id: 'web', label: 'Web applications' },
+  { id: 'ai', label: 'AI experiments' },
+  { id: 'tools', label: 'Developer tools' },
+];
+
+export const projects: readonly Project[] = [
   {
+    id: 'rekindle',
     title: 'ReKindle',
-    description:
-      'Memory-sharing app for dementia patients with collaborative family features.',
-    tech: ['React', 'Node.js', 'Supabase'],
+    description: 'A shared space for families to collect memories, photographs, and stories for loved ones living with dementia.',
+    tech: ['React', 'Material UI', 'Supabase'],
     image: '/Rekindle2.JPG',
-    images: [
-      '/Rekindle1.JPG',
-      '/Rekindle2.JPG',
-      '/Rekindle3.JPG',
-    ],
+    images: ['/Rekindle2.JPG', '/Rekindle1.JPG', '/Rekindle3.JPG'],
     github: 'https://github.com/Samarth-Sharma21/ReKindle',
     demo: 'https://samarth-sharma21.github.io/ReKindle',
+    featured: true,
+    category: 'web',
   },
   {
-    title: 'Github Profile Readme Generator',
-    description:
-      'Fast and smart way to create and customize your GitHub Profile README — with live preview, icons, stats, and more!',
-    tech: ['React', 'Javascript'],
-    image: '/Smart_gh_generator1.png',
-    images: [
-      '/Smart_gh_generator1.png',
-      '/Smart_gh_generator2.png',
-      '/Smart_gh_generator3.png',
-    ],
-    github: 'https://github.com/Samarth-Sharma21/Smart-github-profile-readme-generator.git',
-    demo: 'https://smart-github-profile-readme-generator.netlify.app/',
-  },
-  {
+    id: 'wordleparty',
     title: 'WordleParty',
-    description:
-      'A real-time multiplayer Wordle game built with React and Vite. Create or join rooms and race to guess the word first — no login required.',
-    tech: ['React', 'WebRTC'],
+    description: 'A word-game prototype with room controls and local browser state. An experiment in game interactions and shared-play design.',
+    tech: ['React', 'Vite', 'localStorage'],
     image: '/Wordle1.JPG',
     images: ['/Wordle1.JPG', '/Wordle2.JPG', '/Wordle3.JPG'],
     github: 'https://github.com/Samarth-Sharma21/WordleParty',
     demo: 'https://samarth-sharma21.github.io/WordleParty',
+    featured: true,
+    category: 'web',
   },
   {
-    title: 'Ai Therapist',
-    description:
-      'Currently working on this project.',
-    tech: ['React', 'Llama Api'],
-    image:
-      '/AiTherpist1.JPG',
-    images: [
-      '/AiTherapist1.JPG',
-      '/AiTherapist2.JPG'],
+    id: 'readme-generator',
+    title: 'GitHub README Generator',
+    description: 'A Next.js tool for building a GitHub profile README with a live preview, reorderable sections, and markdown copy or download.',
+    tech: ['Next.js', 'React', 'JavaScript'],
+    image: '/Smart_gh_generator1.png',
+    images: ['/Smart_gh_generator1.png', '/Smart_gh_generator2.png', '/Smart_gh_generator3.png'],
+    github: 'https://github.com/Samarth-Sharma21/Smart-github-profile-readme-generator',
+    demo: 'https://smart-github-profile-readme-generator.netlify.app/',
+    featured: true,
+    category: 'tools',
+  },
+  {
+    id: 'ai-therapist',
+    title: 'AI Therapist',
+    description: 'An early conversational AI experiment using OpenRouter. A prototype, not a clinical service or a substitute for professional care.',
+    tech: ['React', 'TypeScript', 'OpenRouter', 'Supabase'],
+    image: '/AiTherapist1.JPG',
+    images: ['/AiTherapist1.JPG', '/AiTherapist2.JPG'],
     github: 'https://github.com/Samarth-Sharma21/AI_Therapist',
-    demo: '',
+    demo: null,
+    featured: false,
+    category: 'ai',
   },
   {
-    title: 'TTS-STT conversion',
-    description:
-      'A comprehensive Python desktop application that provides both Text-to-Speech (TTS) and Speech-to-Text (STT) functionality with a clean, user-friendly graphical interface.',
-    tech: ['Python', 'pyttsx3', 'SpeechRecognition', 'tkinter'],
-    image:
-      '/tts_stt1.png',
-    images: [
-      '/tts_stt1.png',
-      '/tts_stt2.png'],
-    github: 'https://github.com/Samarth-Sharma21/tts_stt_project.git',
-    demo: '',
+    id: 'speech-tools',
+    title: 'Speech tools',
+    description: 'A Python desktop application for converting text to speech and transcribing speech through a graphical interface.',
+    tech: ['Python', 'pyttsx3', 'SpeechRecognition', 'Tkinter'],
+    image: '/tts_stt1.png',
+    images: ['/tts_stt1.png', '/tts_stt2.png'],
+    github: 'https://github.com/Samarth-Sharma21/tts_stt_project',
+    demo: null,
+    featured: false,
+    category: 'tools',
   },
   {
-    title: 'Sign Language Detection',
-    description:
-      'This project uses a Multi-Layer Perceptron (MLP) model to detect Sign language. It is trained on the a custom dataset.',
-    tech: ['Python', 'MediaPipe', 'TensorFlow'],
-    image:
-      '',
+    id: 'sign-language',
+    title: 'Sign language detection',
+    description: 'A hand-gesture classification experiment using MediaPipe landmarks and a scikit-learn Random Forest model.',
+    tech: ['Python', 'MediaPipe', 'scikit-learn'],
+    image: null,
+    images: [],
     github: 'https://github.com/Samarth-Sharma21/SignLanguageDetection',
-    demo: '',
+    demo: null,
+    featured: false,
+    category: 'ai',
   },
   {
+    id: 'quote-generator',
     title: 'Quote Generator',
-    description:
-      'This project was created to provide you with a random, inspiring quote at the click of a button. Whether you need some motivation, wisdom, or just a thoughtful reflection, this tool has you covered.',
-    tech: ['Html', 'CSS', 'Javascript'],
+    description: 'A small web experiment that presents a new quote at the press of a button. One of my earlier projects.',
+    tech: ['HTML', 'CSS', 'JavaScript'],
     image: '/Quote1.JPG',
-    images: [
-      '/Quote1.JPG',
-      '/Quote2.JPG',
-    ],
+    images: ['/Quote1.JPG', '/Quote2.JPG'],
     github: 'https://github.com/Samarth-Sharma21/Quote-Generator',
     demo: 'https://samarth-sharma21.github.io/Quote-Generator/',
+    featured: false,
+    category: 'web',
   },
 ];
