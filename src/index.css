@@ -25,7 +25,7 @@
   --muted: #62665f;
   --line: #dbddd5;
   --subtle: #eeefe8;
-  --accent: #245dc5;
+  --accent: #ad1457;
   --cover: #1b1f1c;
   --cover-ink: #f3f4ec;
   --cover-muted: #b9bfb5;
@@ -51,7 +51,7 @@
   --muted: #b2b9ae;
   --line: #343b33;
   --subtle: #202720;
-  --accent: #91b7ff;
+  --accent: #f58bb9;
 }
 
 * { box-sizing: border-box; }
@@ -67,7 +67,6 @@ button { border: 0; }
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { font-family: var(--font-display); font-weight: 500; font-optical-sizing: auto; }
 ul { padding: 0; margin: 0; list-style: none; }
-::selection { color: var(--canvas); background: var(--ink); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
 section[id], #skills { scroll-margin-top: 110px; }
 .container-custom { width: min(1200px, calc(100% - 112px)); margin-inline: auto; }
@@ -92,6 +91,7 @@ section[id], #skills { scroll-margin-top: 110px; }
 .site-header { position: fixed; z-index: 20; top: 20px; inset-inline: 0; }
 .nav-shell { width: min(1280px, calc(100% - 56px)); height: 72px; margin-inline: auto; padding-inline: 22px 14px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border: 1px solid var(--line); border-radius: 14px; background: var(--canvas); }
 .brand { display: inline-flex; align-items: center; min-height: 44px; font-size: var(--type-control); font-weight: 600; letter-spacing: -.03em; }
+.brand-mark { width: 36px; height: 36px; object-fit: contain; margin-right: 8px; flex-shrink: 0; }
 .brand-period { color: var(--muted); }
 .desktop-nav { display: flex; align-items: center; gap: 29px; }
 .desktop-nav a { position: relative; font-size: var(--type-control); display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; color: var(--muted); }
@@ -416,4 +416,38 @@ section[id], #skills { scroll-margin-top: 110px; }
   .email-row a:hover:not(:focus-visible) svg { transform: none; }
   .hero-reveal { opacity: 1; transform: none; }
   .button:active:not(:focus-visible), .icon-button:active:not(:focus-visible), .project-filters button:active:not(:focus-visible), .featured-grid .project-card:hover .project-media > img { transform: none; }
+}
+
+
+.contact-section { position: relative; isolation: isolate; }
+.contact-grid, .contact-details { position: relative; z-index: 1; }
+.skyray-wake { position: absolute; z-index: 0; pointer-events: none; width: min(600px, 60%); height: 100%; right: -24px; top: 0; overflow: hidden; color: var(--accent); }
+.wake-rings { position: absolute; width: 100%; height: 100%; inset: 0; }
+.wake-ring { stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-dasharray: .1 9; opacity: .14; transform-origin: 300px 260px; }
+.wake-ray { position: absolute; width: 64%; height: auto; right: 7%; top: -2%; opacity: .075; transform: rotate(-12deg); }
+.skyray-wake[data-entered="true"] .wake-ring { animation: wake-spread 3200ms var(--ease-out) var(--wake-delay) both; }
+.skyray-wake[data-running="false"] .wake-ring { animation-play-state: paused; }
+@keyframes wake-spread {
+  0% { transform: scale(.72); opacity: .04; }
+  35% { opacity: .36; }
+  100% { transform: scale(1); opacity: .14; }
+}
+.site-footer { position: relative; border-top: 1px solid var(--line); padding-top: 20px; }
+.footer-signature { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; }
+.footer-signature img { width: 48px; height: 48px; object-fit: contain; }
+.footer-signature .footer-name { color: var(--ink); font-size: clamp(22px, 2.4vw, 32px); letter-spacing: -.045em; }
+.nav-shell { box-shadow: 0 4px 24px rgb(0 0 0 / .025); }
+.project-media { border: 1px solid rgb(127 127 127 / .12); }
+@media (hover: hover) and (pointer: fine) {
+  .footer-signature img { transition: transform 200ms var(--ease-out); }
+  .footer-signature:hover img { transform: translate(3px, -3px) rotate(-6deg); }
+  .footer-signature:focus-visible img { transform: none; transition: none; }
+}
+@media (max-width: 767px) {
+  .skyray-wake { width: 100%; right: 0; opacity: .65; }
+  .wake-ray { width: 72%; top: 2%; right: -4%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skyray-wake[data-entered="true"] .wake-ring { animation: none; }
+  .footer-signature:hover img { transform: none; transition: none; }
 }

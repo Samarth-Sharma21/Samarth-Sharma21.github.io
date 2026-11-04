@@ -9,7 +9,7 @@ export default function Footer() {
         <nav className="footer-nav" aria-label="Footer navigation"><Link to="/#projects">Work</Link><Link to="/#about">About</Link><Link to="/#contact">Contact</Link></nav>
         <Link className="back-top" to="/#home">Back to top <ArrowUp size={16} /></Link>
       </div>
-      <Link className="footer-signature" to="/">Samarth Sharma<span>.</span></Link>
+      <Link className="footer-signature" to="/" aria-label="Samarth Sharma home"><img src="/brand/skyray.png" alt="" width="48" height="48" /><span className="footer-name">Samarth Sharma<span>.</span></span></Link>
     </footer>
   );
 }

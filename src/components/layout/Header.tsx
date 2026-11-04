@@ -48,6 +48,7 @@ export default function Header() {
       <header className="site-header">
         <div className="nav-shell">
           <Link className="brand" to="/" aria-label="Samarth Sharma home">
+            <img className="brand-mark" src="/brand/skyray.png" width="36" height="36" alt="" />
             <span>Samarth Sharma<span className="brand-period">.</span></span>
           </Link>
           <nav className="desktop-nav" aria-label="Main navigation">

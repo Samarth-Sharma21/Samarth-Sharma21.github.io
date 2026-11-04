@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import SkyrayWake from './SkyrayWake';
 import { ArrowUpRight, Check, Copy } from 'lucide-react';
 
 const email = 'samarthsharma7621@gmail.com';
@@ -21,6 +22,7 @@ export default function ContactSection() {
 
   return (
     <section id="contact" className="contact-section section-space container-custom" tabIndex={-1}>
+      <SkyrayWake />
       <div className="contact-grid">
         <h2>Have a question?<br />Let's talk.</h2>
         <p>Curious about something in my portfolio, or have an idea you'd like to build? My inbox is open.</p>
