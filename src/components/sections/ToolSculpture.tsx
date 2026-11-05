@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Pause, Play } from 'lucide-react';
+import OrbFlight, { type FlightStart } from './OrbFlight';
 
 interface Tool {
   name: string;
@@ -27,6 +28,11 @@ const tools: readonly Tool[] = [
 const rings = [tools.slice(0, 10), tools.slice(10)];
 
 export default function ToolSculpture() {
+  const [flight, setFlight] = useState<FlightStart[] | null>(null);
+  const flightBusy = useRef(false);
+  const [slots, setSlots] = useState(() => tools.map((_, index) => index < rings[0].length ? index : index - rings[0].length));
+  const [arrangement, setArrangement] = useState(0);
+  const finishFlight = useCallback(() => { flightBusy.current = false; setFlight(null); }, []);
   const inspectorRef = useRef<HTMLDivElement>(null);
   const inspectorFlight = useRef<Animation>();
   const hasExplored = useRef(false);
@@ -43,16 +49,16 @@ export default function ToolSculpture() {
 
   useEffect(() => {
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const updatePreference = () => setReducedMotion(preference.matches);
+    const updatePreference = () => { setReducedMotion(preference.matches); if (preference.matches) finishFlight(); };
     preference.addEventListener('change', updatePreference);
     return () => preference.removeEventListener('change', updatePreference);
-  }, []);
+  }, [finishFlight]);
 
   useEffect(() => {
-    const updateVisibility = () => setPageVisible(!document.hidden);
+    const updateVisibility = () => { setPageVisible(!document.hidden); if (document.hidden) finishFlight(); };
     document.addEventListener('visibilitychange', updateVisibility);
     return () => document.removeEventListener('visibilitychange', updateVisibility);
-  }, []);
+  }, [finishFlight]);
 
   useEffect(() => {
     const element = sculptureRef.current;
@@ -84,7 +90,42 @@ export default function ToolSculpture() {
     return () => inspectorFlight.current?.cancel();
   }, [reducedMotion, focusedTool]);
 
-  const running = !paused && !reducedMotion && inView && pageVisible;
+  const running = !flight && !paused && !reducedMotion && inView && pageVisible;
+
+  function scatter(keyboard: boolean) {
+    if (flightBusy.current || document.hidden) return;
+    clearTool();
+    let canFly = !keyboard && !reducedMotion;
+    const scene = sculptureRef.current?.querySelector('.tool-scene')?.getBoundingClientRect();
+    const headerBottom = document.querySelector('header')?.getBoundingClientRect().bottom ?? 0;
+    if (canFly && scene) {
+      canFly = scene.height + headerBottom + 32 <= innerHeight;
+      if (canFly && (scene.top < headerBottom + 12 || scene.bottom > innerHeight - 20)) {
+        window.scrollBy({ top: scene.top - Math.max(headerBottom + 12, (innerHeight - scene.height) / 2), behavior: 'instant' });
+      }
+    }
+    const starts = toolRefs.current.map((button, index) => {
+      const image = button!.querySelector('img')!;
+      const box = image.getBoundingClientRect();
+      const style = getComputedStyle(image);
+      return { icon: tools[index].icon, x: box.x + box.width / 2, y: box.y + box.height / 2, size: parseFloat(style.width), filter: style.filter, opacity: style.opacity };
+    });
+    setSlots(previous => {
+      const shuffled = [...previous];
+      for (const [offset, length] of [[0, rings[0].length], [rings[0].length, rings[1].length]]) {
+        for (let i = length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[offset + i], shuffled[offset + j]] = [shuffled[offset + j], shuffled[offset + i]];
+        }
+        if (shuffled.slice(offset, offset + length).every((slot, i) => slot === previous[offset + i])) {
+          [shuffled[offset], shuffled[offset + 1]] = [shuffled[offset + 1], shuffled[offset]];
+        }
+      }
+      return shuffled;
+    });
+    setArrangement(value => value + 1);
+    if (canFly) { flightBusy.current = true; setFlight(starts); }
+  }
 
   function clearTool() {
     setHoveredTool(null);
@@ -100,13 +141,14 @@ export default function ToolSculpture() {
   }
 
   return (
-    <figure ref={sculptureRef} className="tool-sculpture" data-motion={running ? 'running' : 'paused'} data-reduced-motion={String(reducedMotion)} data-exploring={Boolean(activeTool)} aria-labelledby="tool-sculpture-caption" onKeyDown={event => { if (event.key === 'Escape') { if (event.target instanceof Node && event.currentTarget.querySelector('.tool-inspector')?.contains(event.target)) closeFromKeyboard(); else clearTool(); } }}>
+    <figure ref={sculptureRef} className="tool-sculpture" data-motion={running ? 'running' : 'paused'} data-reduced-motion={String(reducedMotion)} data-exploring={Boolean(activeTool)} data-flight={Boolean(flight)}
+      onFocusCapture={event => { if (flight && event.target instanceof Element && event.target.closest('.tool-target')) finishFlight(); }} aria-labelledby="tool-sculpture-caption" onKeyDown={event => { if (event.key === 'Escape') { finishFlight(); if (event.target instanceof Node && event.currentTarget.querySelector('.tool-inspector')?.contains(event.target)) closeFromKeyboard(); else clearTool(); } }}>
       <div className="tool-scene">
         <div className="tool-background" role="toolbar" aria-label="Explore technologies" aria-describedby="tool-keyboard-help">
           {rings.map((ring, ringIndex) => <div className={`tool-ring tool-ring-${ringIndex}`} key={ringIndex}>
             {ring.map((tool, index) => {
-              const phase = index * 360 / ring.length;
               const toolIndex = ringIndex === 0 ? index : index + rings[0].length;
+              const phase = slots[toolIndex] * 360 / ring.length;
               const position: ToolPosition = { '--phase': `${phase}deg`, '--counter-phase': `${-phase}deg` };
               return <div className="tool-orbit-arm" style={position} key={tool.icon}><div className="tool-orbit-position"><div className="tool-counter-rotation">
                 <button className="tool-target" type="button" ref={element => { toolRefs.current[toolIndex] = element; }} tabIndex={focusedIndex === toolIndex ? 0 : -1} aria-label={`Explore ${tool.name}`} data-active={activeTool?.icon === tool.icon}
@@ -120,13 +162,14 @@ export default function ToolSculpture() {
             })}
           </div>)}
         </div>
-        <div className="tool-core" aria-hidden="true">
-          <svg className="tool-rosette" viewBox="0 0 120 120" fill="none">
+        <button className="tool-core tool-scatter-trigger" type="button" tabIndex={activeTool ? -1 : 0} aria-label={reducedMotion ? 'Rearrange technologies' : 'Scatter and regroup technologies'} aria-disabled={Boolean(flight)} onClick={event => scatter(event.detail === 0)}>
+          <span className="tool-scatter-hint" aria-hidden="true">{reducedMotion ? 'Rearrange' : 'Scatter'}</span>
+          <svg aria-hidden="true" className="tool-rosette" viewBox="0 0 120 120" fill="none">
             {Array.from({ length: 8 }, (_, index) => <ellipse key={index} cx="60" cy="60" rx="46" ry="17" transform={`rotate(${index * 22.5} 60 60)`} />)}
             <circle className="tool-rosette-center" cx="60" cy="60" r="5" />
             <circle className="tool-rosette-point" cx="106" cy="60" r="4" />
           </svg>
-        </div>
+        </button>
         <div ref={inspectorRef} className="tool-inspector" aria-live="polite" aria-atomic="true" onBlur={event => { if (!(event.relatedTarget instanceof Node && event.currentTarget.contains(event.relatedTarget))) setFocusedTool(null); }}>
           {activeTool && <><span className="tool-inspector-label">In my toolkit</span><strong>{activeTool.name}</strong>{activeTool.proof && <span className="tool-inspector-proof">{activeTool.proof}</span>}<button type="button" onClick={event => { if (event.detail === 0) closeFromKeyboard(); else clearTool(); }}>Close <span aria-hidden="true">×</span></button></>}
         </div>
@@ -134,11 +177,13 @@ export default function ToolSculpture() {
       <figcaption id="tool-sculpture-caption" className="tool-sculpture-caption">
         <p>Curiosity, in motion.<br /><span>Hover or tap a tool to explore.</span></p>
         <span id="tool-keyboard-help" className="sr-only">Use the arrow keys to move between tools.</span>
-        <button className="tool-motion-control" type="button" disabled={reducedMotion} aria-label={reducedMotion ? 'Tool animation paused for reduced motion' : paused ? 'Play tool animation' : 'Pause tool animation'} aria-pressed={paused} onClick={() => setPaused(value => !value)}>
-          {running ? <Pause size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" />}
+        <button className="tool-motion-control" type="button" disabled={reducedMotion} aria-label={reducedMotion ? 'Tool animation paused for reduced motion' : paused ? 'Play tool animation' : 'Pause tool animation'} aria-pressed={paused} onClick={() => { finishFlight(); setPaused(value => !value); }}>
+          {paused || reducedMotion ? <Play size={15} aria-hidden="true" /> : <Pause size={15} aria-hidden="true" />}
           <span>{reducedMotion ? 'Static view' : paused ? 'Play' : 'Pause'}</span>
         </button>
       </figcaption>
+      <span className="sr-only" role="status">{arrangement > 0 && !flight ? `Tools rearranged. Arrangement ${arrangement}.` : ''}</span>
+      {flight && <OrbFlight starts={flight} targets={toolRefs} onFinish={finishFlight} />}
     </figure>
   );
 }

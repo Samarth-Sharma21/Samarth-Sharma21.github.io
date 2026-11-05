@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ImageViewer from './ImageViewer';
 import useReducedMotion from '../../hooks/useReducedMotion';
-import { ChevronLeft, ChevronRight, Code2, Expand, Pause, Play } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Code2, Expand, Pause, Play } from 'lucide-react';
 import type { Project } from '../../types';
 
 export default function ProjectCard({ project, prominent = false }: { project: Project; prominent?: boolean }) {
@@ -119,8 +119,8 @@ export default function ProjectCard({ project, prominent = false }: { project: P
         <p className="project-description">{project.description}</p>
         <ul className="tech-list" aria-label={`${project.title} technologies`}>{project.tech.map(tech => <li key={tech}>{tech}</li>)}</ul>
         <div className="project-links">
-          <a href={project.github} target="_blank" rel="noopener noreferrer">View code <span className="sr-only"> for {project.title}, opens in a new tab</span></a>
-          {project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer">Live demo <span className="sr-only"> of {project.title}, opens in a new tab</span></a>}
+          <a href={project.github} target="_blank" rel="noopener noreferrer">View code <ArrowUpRight size={16} aria-hidden="true" /><span className="sr-only"> for {project.title}, opens in a new tab</span></a>
+          {project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer">Live demo <ArrowUpRight size={16} aria-hidden="true" /><span className="sr-only"> of {project.title}, opens in a new tab</span></a>}
         </div>
       </div>
     </article>

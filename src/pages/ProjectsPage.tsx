@@ -1,3 +1,4 @@
+import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import useReducedMotion from '../hooks/useReducedMotion';
@@ -16,7 +17,7 @@ export default function ProjectsPage() {
 
   return (
     <section className="archive-page container-custom">
-      <Link className="text-link archive-back" to="/#projects"> Back to selected work</Link>
+      <Link className="text-link archive-back" to="/#projects"><ArrowLeft size={16} aria-hidden="true" /> Back to selected work</Link>
       <div className="section-heading archive-heading"><div><h1>The project<br />archive.</h1></div><p>A collection of applications, tools, and experiments. Some polished. Some early. Each one taught me something.</p></div>
       <div className="archive-toolbar">
         <div className="project-filters" aria-label="Filter projects">
@@ -32,7 +33,7 @@ export default function ProjectsPage() {
           {filtered.map(project => <motion.div key={project.id} layout="position" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ opacity: { duration: instant ? 0 : 0.15 }, layout: { duration: instant ? 0 : 0.22, ease: [0.23, 1, 0.32, 1] } }}><ProjectCard project={project} /></motion.div>)}
         </AnimatePresence>
       </div>
-      <div className="archive-bottom"><p>There's always another idea in the works.</p><a className="text-link" href="https://github.com/Samarth-Sharma21" target="_blank" rel="noopener noreferrer">More on GitHub </a></div>
+      <div className="archive-bottom"><p>There's always another idea in the works.</p><a className="text-link" href="https://github.com/Samarth-Sharma21" target="_blank" rel="noopener noreferrer">More on GitHub <ArrowUpRight size={16} aria-hidden="true" /></a></div>
     </section>
   );
 }

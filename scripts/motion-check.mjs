@@ -316,7 +316,7 @@ try {
   await delay(500);
   for(const selector of ['.hero-actions .button','.hero-actions .text-link','.desktop-nav a','.back-top','.project-links a']) {
     await hover(selector);
-    record(`Stationary hover without underline: ${selector}`,await client.evaluate(`(()=>{const e=document.querySelector('${selector}');const s=getComputedStyle(e);return s.transform==='none'&&s.textDecorationLine==='none'&&!e.querySelector('.lucide-arrow-up-right,.lucide-arrow-down,.lucide-arrow-up')})()`));
+    record(`Stationary hover without underline: ${selector}`,await client.evaluate(`(()=>{const e=document.querySelector('${selector}');const s=getComputedStyle(e);return s.transform==='none'&&s.textDecorationLine==='none'&&[...e.querySelectorAll('svg')].every(svg=>getComputedStyle(svg).transform==='none')})()`));
   }
   await client.evaluate(`window.scrollTo({top:0,behavior:'instant'})`);
   await client.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:2,y:300});
