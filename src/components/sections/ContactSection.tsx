@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { ArrowUpRight, Check, Copy } from 'lucide-react';
 
-const email = 'samarthsharma7621@gmail.com';
-const composeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
+import { composeUrl, email } from '../../data/contact';
+
 type CopyState = 'idle' | 'copied' | 'unavailable';
 
 export default function ContactSection() {

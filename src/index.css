@@ -546,3 +546,18 @@ a > svg { flex-shrink: 0; }
   .project-card .project-links a { padding-inline: 10px; gap: 8px; font-size: 13px; }
   .project-preview { inset: 12px 12px 64px; }
 }
+
+.footer-bird-contact .footer-signature { display: flex; width: 100%; flex-wrap: wrap; }
+.footer-bird-perch { display: block; flex: 0 0 48px; width: 48px; height: 48px; }
+.footer-bird { position: absolute; left: 0; top: 0; z-index: 2; width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.footer-bird img { display: block; pointer-events: none; }
+.footer-bird:focus-visible { outline-offset: 1px; }
+.footer-bird-contact .footer-name { color: var(--ink); }
+.footer-bird-rest { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; padding: 0 10px; min-height: 44px; color: var(--muted); border: 1px solid var(--line); border-radius: 8px; font-size: 12px; font-weight: 400; letter-spacing: 0; background: transparent; }
+.footer-bird-rest:disabled { opacity: .6; cursor: default; }
+.footer-bird-status { min-height: 24px; margin-top: 8px; padding-left: 58px; }
+.footer-bird-status a { color: var(--ink); overflow-wrap: anywhere; }
+@media (max-width: 767px) {
+  .footer-bird-status { padding-left: 0; min-height: 42px; }
+  .footer-bird-rest { margin-left: 58px; }
+}

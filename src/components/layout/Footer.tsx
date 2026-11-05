@@ -1,15 +1,18 @@
+import { useRef } from 'react';
+import FooterBird from './FooterBird';
 import { ArrowUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
+  const boundary = useRef<HTMLElement>(null);
   return (
-    <footer className="site-footer container-custom">
+    <footer ref={boundary} className="site-footer container-custom">
       <div className="footer-top">
         <p>Built with curiosity. © {new Date().getFullYear()}</p>
         <nav className="footer-nav" aria-label="Footer navigation"><Link to="/#projects">Work</Link><Link to="/#about">About</Link><Link to="/#contact">Contact</Link></nav>
         <Link className="back-top" to="/#home">Back to top <ArrowUp size={16} /></Link>
       </div>
-      <Link className="footer-signature" to="/" aria-label="Samarth Sharma home"><img src="/brand/skyray.png" alt="" width="48" height="48" /><span className="footer-name">Samarth Sharma<span>.</span></span></Link>
+      <FooterBird boundary={boundary} />
     </footer>
   );
 }
