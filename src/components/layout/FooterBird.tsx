@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
 import useReducedMotion from '../../hooks/useReducedMotion';
@@ -6,7 +6,7 @@ import { composeUrl, email } from '../../data/contact';
 
 type Point = { x: number; y: number };
 
-export default function FooterBird({ boundary }: { boundary: RefObject<HTMLElement> }) {
+export default function FooterBird() {
   const perch = useRef<HTMLSpanElement>(null);
   const bird = useRef<HTMLButtonElement>(null);
   const picture = useRef<HTMLImageElement>(null);
@@ -35,7 +35,8 @@ export default function FooterBird({ boundary }: { boundary: RefObject<HTMLEleme
   }, []);
 
   useLayoutEffect(() => {
-    const footer = boundary.current, button = bird.current, image = picture.current, anchor = perch.current;
+    const button = bird.current, image = picture.current, anchor = perch.current;
+    const footer = button?.closest('footer');
     if (!footer || !button || !image || !anchor) return;
     let frame = 0;
     let previousTime = 0;
@@ -125,7 +126,7 @@ export default function FooterBird({ boundary }: { boundary: RefObject<HTMLEleme
       footer.removeEventListener('pointerleave', leave);
       document.removeEventListener('visibilitychange', visibility);
     };
-  }, [boundary, canFollow]);
+  }, [canFollow]);
 
   async function activate() {
     restingRef.current = false;
@@ -155,7 +156,7 @@ export default function FooterBird({ boundary }: { boundary: RefObject<HTMLEleme
       <span className="footer-bird-perch" ref={perch}>
         <button ref={bird} type="button" className="footer-bird" aria-label={resting ? 'Wake the bird and copy my email' : 'Copy my email'} aria-describedby="footer-bird-status" onClick={activate}
           onPointerEnter={() => { held.current = true; stop.current(); }} onPointerLeave={() => { held.current = bird.current?.matches(':focus-visible') ?? false; }}
-          onFocus={() => { held.current = true; stop.current(); }} onBlur={() => { held.current = bird.current?.matches(':hover') ?? false; if (!boundary.current?.matches(':hover')) returnHome.current(); }}>
+          onFocus={() => { held.current = true; stop.current(); }} onBlur={() => { held.current = bird.current?.matches(':hover') ?? false; if (!bird.current?.closest('footer')?.matches(':hover')) returnHome.current(); }}>
           <img ref={picture} src="/brand/skyray.png" alt="" width="48" height="48" draggable={false} />
         </button>
       </span>

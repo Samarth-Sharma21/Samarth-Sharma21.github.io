@@ -3,7 +3,7 @@ import { spawn } from 'node:child_process';
 import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-const base = process.env.PORTFOLIO_URL || 'http://127.0.0.1:5173';
+const base = process.env.PORTFOLIO_URL || 'http://127.0.0.1:4173';
 const scratch = process.env.PORTFOLIO_SCRATCH;
 assert(scratch, 'Set PORTFOLIO_SCRATCH to a registered agent-scratch directory.');
 const evidence = path.resolve('tasks/evidence');
@@ -177,6 +177,7 @@ try {
   const pointInFooter=async (x,y)=>{const p=await client.evaluate(`(()=>{const r=document.querySelector('${footer}').getBoundingClientRect();return{x:r.x+r.width*${x},y:r.y+r.height*${y}}})()`);await client.send('Input.dispatchMouseEvent',{type:'mouseMoved',...p});};
   const bottom=async()=>{await client.evaluate(`window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'})`);await delay(100);};
   await viewport(1440,900);await navigate('/');await bottom();
+  record('Production bundle initializes footer motion on first mount',await client.evaluate(`Boolean(document.querySelector('script[src^="/assets/"]'))&&document.querySelector('.footer-bird').style.transform.startsWith('translate(')`));
   await client.send('Browser.grantPermissions',{origin:base,permissions:['clipboardReadWrite','clipboardSanitizedWrite']});
   record('Footer starts active with stationary name and a rest control',await client.evaluate(`document.querySelector('.footer-bird-contact').dataset.resting==='false'&&document.querySelector('.footer-bird-contact').dataset.follow==='true'&&document.querySelector('.footer-name').tagName==='A'&&Boolean(document.querySelector('.footer-bird-rest'))`));
   const initial=await centre(bird),name=await centre('.footer-name');
@@ -230,10 +231,11 @@ try {
   await client.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
   await until(`document.querySelector('.footer-bird-contact').dataset.follow==='false'`,'reduced motion applied');const still=await pose();await pointInFooter(.2,.1);await pointInFooter(.8,.8);await delay(350);
   record('Live reduced motion perches bird and disables following',still===await pose()&&await client.evaluate(`!document.querySelector('.footer-bird-rest')`));
-  await click(bird);await until(`document.querySelector('#footer-bird-status').textContent.includes('Email copied')`,'reduced copy');record('Reduced-motion copy works',true);
+  await client.evaluate(`navigator.clipboard.writeText('footer-check-before-reduced')`);
+  await click(bird);await until(`navigator.clipboard.readText().then(value=>value==='samarthsharma7621@gmail.com')`,'reduced copy');record('Reduced-motion copy works',true);
   await client.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'no-preference'}]});
-  await client.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});await viewport(390,844);await bottom();
-  await until(`document.querySelector('.footer-bird-contact').dataset.follow==='false'`,'touch-only media');
+  await client.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});await viewport(390,844);await navigate('/');await bottom();
+  await until(`document.querySelector('.footer-bird-contact').dataset.follow==='false'&&document.querySelector('#footer-bird-status').textContent.includes('Tap the bird')`,'fresh touch-only footer');
   const touch=await centre(bird);await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...touch,radiusX:1,radiusY:1}]});await client.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
   await until(`document.querySelector('#footer-bird-status').textContent.includes('Email copied')`,'touch copy');record('Touch tap copies from a stationary perched bird',true);await save('footer-bird-touch');
   record('No browser errors or failed assets',!errors.length&&!consoleErrors.length&&!failedRequests.length,JSON.stringify({errors,consoleErrors,failedRequests}));
