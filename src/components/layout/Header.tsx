@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowUpRight, Menu, Moon, Sun, X } from 'lucide-react';
+import { Menu, Moon, Sun, X } from 'lucide-react';
 import { useTheme } from '../../contexts/theme';
 
 const navigation = [
@@ -58,7 +58,7 @@ export default function Header() {
             <button className="icon-button theme-toggle" aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} onClick={toggleTheme}>
               {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
             </button>
-            <Link className="button nav-contact" to="/#contact">Let's talk <ArrowUpRight size={16} /></Link>
+            <Link className="button nav-contact" to="/#contact">Let's talk </Link>
             <button ref={buttonRef} className="icon-button menu-toggle" aria-label="Open navigation" aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(true)}>
               <Menu size={22} />
             </button>
@@ -69,9 +69,9 @@ export default function Header() {
         <div className="mobile-dialog-content">
           <div className="mobile-dialog-heading"><h2 className="menu-title">Navigation</h2><button className="icon-button" aria-label="Close navigation" onClick={closeMenu}><X size={24} /></button></div>
           <nav aria-label="Mobile navigation">
-            {navigation.map(link => <Link key={link.label} to={link.href} onClick={closeMenu}>{link.label}<ArrowUpRight size={26} /></Link>)}
-            <Link to="/projects" onClick={closeMenu}>All projects<ArrowUpRight size={26} /></Link>
-            <Link to="/#contact" onClick={closeMenu}>Contact<ArrowUpRight size={26} /></Link>
+            {navigation.map(link => <Link key={link.label} to={link.href} onClick={closeMenu}>{link.label}</Link>)}
+            <Link to="/projects" onClick={closeMenu}>All projects</Link>
+            <Link to="/#contact" onClick={closeMenu}>Contact</Link>
           </nav>
           <p className="mobile-menu-note">Web, cloud, and the things in between.</p>
         </div>

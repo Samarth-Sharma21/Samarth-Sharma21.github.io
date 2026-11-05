@@ -1,4 +1,4 @@
-import { ArrowUp } from 'lucide-react';
+
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="footer-top">
         <p>Built with curiosity. © {new Date().getFullYear()}</p>
         <nav className="footer-nav" aria-label="Footer navigation"><Link to="/#projects">Work</Link><Link to="/#about">About</Link><Link to="/#contact">Contact</Link></nav>
-        <Link className="back-top" to="/#home">Back to top <ArrowUp size={16} /></Link>
+        <Link className="back-top" to="/#home">Back to top </Link>
       </div>
       <Link className="footer-signature" to="/" aria-label="Samarth Sharma home"><img src="/brand/skyray.png" alt="" width="48" height="48" /><span className="footer-name">Samarth Sharma<span>.</span></span></Link>
     </footer>

@@ -27,6 +27,9 @@ const tools: readonly Tool[] = [
 const rings = [tools.slice(0, 10), tools.slice(10)];
 
 export default function ToolSculpture() {
+  const inspectorRef = useRef<HTMLDivElement>(null);
+  const inspectorFlight = useRef<Animation>();
+  const hasExplored = useRef(false);
   const sculptureRef = useRef<HTMLElement>(null);
   const toolRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -66,6 +69,21 @@ export default function ToolSculpture() {
   }, [selectedTool]);
 
   const activeTool = focusedTool ?? hoveredTool ?? selectedTool;
+  useEffect(() => {
+    if (!activeTool || hasExplored.current) return;
+    hasExplored.current = true;
+    if (!focusedTool && !reducedMotion) {
+      inspectorFlight.current = inspectorRef.current?.animate([
+        { opacity: 0, transform: 'translateY(4px)' }, { opacity: 1, transform: 'none' },
+      ], { duration: 150, easing: getComputedStyle(document.documentElement).getPropertyValue('--ease-out').trim() });
+    }
+  }, [activeTool, focusedTool, reducedMotion]);
+
+  useEffect(() => {
+    if (reducedMotion || focusedTool) inspectorFlight.current?.cancel();
+    return () => inspectorFlight.current?.cancel();
+  }, [reducedMotion, focusedTool]);
+
   const running = !paused && !reducedMotion && inView && pageVisible;
 
   function clearTool() {
@@ -77,7 +95,7 @@ export default function ToolSculpture() {
   function closeFromKeyboard() {
     clearTool();
     const nextControl = sculptureRef.current?.querySelector<HTMLButtonElement>('.tool-motion-control:not(:disabled)')
-      ?? sculptureRef.current?.closest('.hero')?.querySelector<HTMLAnchorElement>('.hero-bottom a');
+      ?? document.querySelector<HTMLButtonElement>('#projects .project-preview');
     nextControl?.focus({ preventScroll: true });
   }
 
@@ -92,7 +110,7 @@ export default function ToolSculpture() {
               const position: ToolPosition = { '--phase': `${phase}deg`, '--counter-phase': `${-phase}deg` };
               return <div className="tool-orbit-arm" style={position} key={tool.icon}><div className="tool-orbit-position"><div className="tool-counter-rotation">
                 <button className="tool-target" type="button" ref={element => { toolRefs.current[toolIndex] = element; }} tabIndex={focusedIndex === toolIndex ? 0 : -1} aria-label={`Explore ${tool.name}`} data-active={activeTool?.icon === tool.icon}
-                  onPointerEnter={event => { if (event.pointerType === 'mouse') { setFocusedTool(null); setHoveredTool(tool); } }} onPointerLeave={() => setHoveredTool(null)}
+                  onPointerEnter={event => { if (event.pointerType === 'mouse') { setHoveredTool(tool); } }} onPointerLeave={() => setHoveredTool(null)}
                   onFocus={event => { setFocusedIndex(toolIndex); setFocusedTool(event.currentTarget.matches(':focus-visible') ? tool : null); }} onBlur={event => { if (!(event.relatedTarget instanceof Node && sculptureRef.current?.querySelector('.tool-inspector')?.contains(event.relatedTarget))) setFocusedTool(null); }}
                   onKeyDown={event => { const delta = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0; if (delta) { event.preventDefault(); toolRefs.current[(toolIndex + delta + tools.length) % tools.length]?.focus(); } }}
                   onClick={() => setSelectedTool(current => current?.icon === tool.icon ? null : tool)}>
@@ -109,7 +127,7 @@ export default function ToolSculpture() {
             <circle className="tool-rosette-point" cx="106" cy="60" r="4" />
           </svg>
         </div>
-        <div className="tool-inspector" aria-live="polite" aria-atomic="true" onBlur={event => { if (!(event.relatedTarget instanceof Node && event.currentTarget.contains(event.relatedTarget))) setFocusedTool(null); }}>
+        <div ref={inspectorRef} className="tool-inspector" aria-live="polite" aria-atomic="true" onBlur={event => { if (!(event.relatedTarget instanceof Node && event.currentTarget.contains(event.relatedTarget))) setFocusedTool(null); }}>
           {activeTool && <><span className="tool-inspector-label">In my toolkit</span><strong>{activeTool.name}</strong>{activeTool.proof && <span className="tool-inspector-proof">{activeTool.proof}</span>}<button type="button" onClick={event => { if (event.detail === 0) closeFromKeyboard(); else clearTool(); }}>Close <span aria-hidden="true">×</span></button></>}
         </div>
       </div>
