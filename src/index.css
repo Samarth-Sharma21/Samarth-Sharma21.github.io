@@ -480,8 +480,10 @@ a > svg { flex-shrink: 0; }
 .tool-scatter-trigger:focus-visible .tool-scatter-hint { opacity: 1; transition: none; }
 .tool-sculpture[data-flight=true] .tool-target { opacity: 0; pointer-events: none; }
 .tool-sculpture[data-flight=true] .tool-scatter-hint { opacity: 0; }
-.orb-flight { position: fixed; inset: 0; z-index: 30; overflow: hidden; pointer-events: none; }
-.orb-flight img { position: absolute; object-fit: contain; pointer-events: none; will-change: transform; }
+.orb-flight { position: fixed; inset: 0; z-index: 10; overflow: hidden; pointer-events: none; }
+.orb-flyer { position: absolute; pointer-events: none; will-change: transform; }
+.orb-flyer img, .orb-ray { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.orb-ray { background-size: 100% 100%; opacity: 0; }
 .portrait-trigger { position: relative; display: block; width: 100%; padding: 0; background: transparent; text-align: left; border-radius: 10px 10px 0 0; }
 .portrait-trigger:focus-visible { outline-offset: -5px; }
 .portrait-trigger > img { width: 100%; aspect-ratio: .86; object-fit: cover; object-position: center 33%; }
@@ -501,4 +503,46 @@ a > svg { flex-shrink: 0; }
 
 @media (max-height: 700px) {
   .tool-scene { max-width: min(550px, max(260px, calc(100svh - 160px))); }
+}
+
+/* Project frames keep the screenshot, controls and description in one surface. */
+.project-card { border: 1px solid var(--line); border-radius: 20px; background: var(--surface); overflow: hidden; padding: 12px; box-shadow: 0 8px 28px #00000006; transition: border-color 180ms ease, box-shadow 180ms ease; }
+.work-section .project-card { background: #202622; border-color: #39423b; box-shadow: 0 12px 32px #00000012; }
+.project-card-prominent { gap: 24px; padding: 14px; }
+.project-card .project-copy { padding: 24px 12px 12px; }
+.project-card-prominent .project-copy { padding: 24px 20px 24px 0; }
+.project-card .project-category { margin: 0 0 10px; font-size: 11px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; }
+.project-card h3 { font-size: clamp(24px, 2.3vw, 31px); letter-spacing: -.035em; }
+.project-card-prominent h3 { font-size: clamp(30px, 3vw, 40px); }
+.project-card .project-description { margin-top: 14px; }
+.project-card .tech-list { gap: 6px; margin-top: 20px; }
+.project-card .tech-list li { padding: 5px 9px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px; }
+.work-section .tech-list li { border-color: #39423b; color: #bac5bc; background: #ffffff03; }
+.project-card .project-links { margin-top: 24px; gap: 10px; }
+.project-card .project-links a { padding: 0 14px; border: 1px solid var(--line); border-radius: 9px; gap: 12px; }
+.work-section .project-links a { border-color: #465149; }
+.project-card .project-links a:last-child { background: var(--ink); color: var(--canvas); border-color: transparent; }
+.work-section .project-links a:last-child { background: #e7eee4; color: #18211b; }
+.project-card .project-media { border-radius: 12px; border: 1px solid #0000000d; background: radial-gradient(ellipse at 50% 0%, #f9faf7, #dce3d8); }
+.project-card .project-media-wordleparty { background: radial-gradient(ellipse at 50% 0%, #f5f2fd, #dbd6e8); }
+.project-card .project-media-readme-generator { background: radial-gradient(ellipse at 50% 0%, #f3f6fa, #d6dee7); }
+.dark .archive-grid .project-media { background: radial-gradient(ellipse at 50% 0%, #3a443d, #242d27); }
+.project-preview { inset: 18px 18px 68px; border-radius: 7px; }
+.project-preview img { border-radius: 7px; }
+.project-card .gallery-controls { left: 0; right: 0; bottom: 0; border: 0; border-top: 1px solid #0000000e; border-radius: 0; background: #ffffff80; padding: 3px 10px; box-shadow: none; }
+.project-card .gallery-controls .icon-button { border-radius: 8px; }
+.dark .archive-grid .gallery-controls { background: #161f1ad9; border-top-color: #ffffff12; color: #e3ebe4; }
+.dark .archive-grid .gallery-controls .icon-button:hover { background: #ffffff12; }
+@media (hover: hover) and (pointer: fine) {
+  .project-card:hover { border-color: #8b988b; box-shadow: 0 16px 40px #00000012; }
+  .work-section .project-card:hover { border-color: #647569; }
+  .project-card .project-links a:hover { border-color: currentColor; }
+}
+@media (max-width: 767px) {
+  .project-card, .project-card-prominent { padding: 9px; border-radius: 16px; }
+  .project-card .project-copy, .project-card-prominent .project-copy { padding: 22px 10px 12px; }
+  .project-card .gallery-controls { padding-inline: 4px; }
+  .project-card .project-links { gap: 8px; }
+  .project-card .project-links a { padding-inline: 10px; gap: 8px; font-size: 13px; }
+  .project-preview { inset: 12px 12px 64px; }
 }

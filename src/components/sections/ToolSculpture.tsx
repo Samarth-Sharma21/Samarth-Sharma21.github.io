@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Pause, Play } from 'lucide-react';
 import OrbFlight, { type FlightStart } from './OrbFlight';
+import { rayMorph } from './rayMorph';
 
 interface Tool {
   name: string;
@@ -46,6 +47,22 @@ export default function ToolSculpture() {
   const [inView, setInView] = useState(true);
   const [pageVisible, setPageVisible] = useState(() => !document.hidden);
   const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  useEffect(() => {
+    let cancelled = false;
+    let timer: number;
+    const prepare = async (index: number) => {
+      const image = toolRefs.current[index]?.querySelector('img');
+      if (!image || cancelled) return;
+      try {
+        await image.decode();
+        if (!cancelled) rayMorph(image);
+      } catch { /* A failed icon load must not block the rest of the toolkit. */ }
+      if (!cancelled && index + 1 < tools.length) timer = window.setTimeout(() => { void prepare(index + 1); }, 40);
+    };
+    timer = window.setTimeout(() => { void prepare(0); }, 500);
+    return () => { cancelled = true; window.clearTimeout(timer); };
+  }, []);
 
   useEffect(() => {
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');

@@ -332,9 +332,10 @@ try {
   await client.evaluate(`document.querySelector('${card}').scrollIntoView({block:'center',behavior:'instant'})`);
   await client.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:2,y:300});
   await until(`document.querySelector('${card} .project-media').dataset.autoplay==='running'`,'visible automatic gallery');
+  const autoStart=Date.now();
   const beforeAuto=await client.evaluate(`document.querySelector(${JSON.stringify(img)}).src`);
-  await until(`document.querySelector(${JSON.stringify(img)}).src!==${JSON.stringify(beforeAuto)}`,'4 second automatic advance');
-  record('Visible gallery advances automatically',true);
+  await until(`document.querySelector(${JSON.stringify(img)}).src!==${JSON.stringify(beforeAuto)}`,'1.5 second automatic advance');
+  record('Visible gallery advances within 1.8 seconds',Date.now()-autoStart<=1800,String(Date.now()-autoStart)+'ms');
   await hover(card+' .project-preview');
   const held=await client.evaluate(`document.querySelector(${JSON.stringify(img)}).src`);
   await delay(4300);
@@ -347,6 +348,17 @@ try {
   await client.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:2,y:300});
   await until(`document.querySelector(${JSON.stringify(img)}).src!==${JSON.stringify(held)}`,'play resumes cycling');
   record('Play resumes automatic images',true);
+  await click(card+' .gallery-controls button[aria-label^="Next image for"]');
+  await client.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:2,y:300});
+  await delay(300);
+  const manualImage=await client.evaluate(`document.querySelector(${JSON.stringify(img)}).src`);
+  await delay(3200);
+  record('Manual arrow stops autoplay until Play is pressed',await client.evaluate(`document.querySelector(${JSON.stringify(img)}).src===${JSON.stringify(manualImage)}&&document.querySelector('${card} .gallery-autoplay').getAttribute('aria-pressed')==='true'`));
+  await click(card+' .gallery-autoplay');
+  await client.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:2,y:300});
+  await until(`document.querySelector(${JSON.stringify(img)}).src!==${JSON.stringify(manualImage)}`,'play after manual navigation');
+  record('Play explicitly resumes after manual navigation',true);
+
   await click(card+' .gallery-controls button:first-child');
   const enlarged=await client.evaluate(`document.querySelector('.viewer-image').src`);
   await delay(4300);

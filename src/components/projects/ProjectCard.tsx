@@ -39,7 +39,7 @@ export default function ProjectCard({ project, prominent = false }: { project: P
     if (!transition.current.animate || reduced || !picture.current) return;
     fade.current = outgoing.current?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: getComputedStyle(document.documentElement).getPropertyValue('--ease-out').trim() });
     animation.current = picture.current.animate([
-      { transform: `translateX(${transition.current.direction * 12}px)`, opacity: 0.35 },
+      { transform: `translateX(${transition.current.direction * 12}px)`, opacity: 0 },
       { transform: 'none', opacity: 1 },
     ], { duration: 220, easing: getComputedStyle(document.documentElement).getPropertyValue('--ease-out').trim() });
   }, [imageIndex, reduced]);
@@ -47,7 +47,7 @@ export default function ProjectCard({ project, prominent = false }: { project: P
   const step = useCallback(async (direction: number, keyboard: boolean, isAutomatic = false) => {
     if (images.length < 2) return;
     const next = (requested.current + direction + images.length) % images.length;
-    if (!isAutomatic) requested.current = next;
+    if (!isAutomatic) { setAutomatic(false); autoplayAllowed.current = false; requested.current = next; }
     const id = ++requestId.current;
     const preload = new Image();
     preload.src = images[next];
@@ -84,7 +84,7 @@ export default function ProjectCard({ project, prominent = false }: { project: P
 
   useEffect(() => {
     if (!running) return;
-    const timer = window.setTimeout(() => { void step(1, false, true); }, 4000);
+    const timer = window.setTimeout(() => { void step(1, false, true); }, 1500);
     return () => window.clearTimeout(timer);
   }, [running, step]);
 
@@ -114,8 +114,8 @@ export default function ProjectCard({ project, prominent = false }: { project: P
       {viewer && <ImageViewer title={project.title} src={selectedImage} index={imageIndex} count={images.length} animate={viewer.animate} trigger={trigger} restoreFocus={opener} onClose={closeViewer} onStep={step} error={error} movement={transition.current} />}
       <div className="project-copy">
         {error && <p className="gallery-error" role="status">{error}</p>}
-        <h3>{project.title}</h3>
         <p className="project-category">{project.category === 'web' ? 'Web application' : project.category === 'ai' ? 'AI experiment' : 'Developer tool'}</p>
+        <h3>{project.title}</h3>
         <p className="project-description">{project.description}</p>
         <ul className="tech-list" aria-label={`${project.title} technologies`}>{project.tech.map(tech => <li key={tech}>{tech}</li>)}</ul>
         <div className="project-links">
