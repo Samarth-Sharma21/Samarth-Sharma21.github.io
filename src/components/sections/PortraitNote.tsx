@@ -5,7 +5,7 @@ const notes = ['Learning by building.', 'From cloud infrastructure to interfaces
 export default function PortraitNote() {
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState(0);
-  const nextNote = useRef(0);
+  const lastNote = useRef<number | null>(null);
   const hovering = useRef(false);
   const touch = useRef(false);
   const suppressHover = useRef(false);
@@ -17,11 +17,16 @@ export default function PortraitNote() {
     return () => document.removeEventListener('keydown', dismiss);
   }, [open]);
 
-  function reveal() {
-    if (open) return;
-    setNote(nextNote.current % notes.length);
-    nextNote.current++;
+  function showNextNote() {
+    const choices = notes.map((_, index) => index).filter(index => index !== lastNote.current);
+    const next = choices[Math.floor(Math.random() * choices.length)];
+    lastNote.current = next;
+    setNote(next);
     setOpen(true);
+  }
+
+  function reveal() {
+    if (!open) showNextNote();
   }
 
   return (
@@ -32,7 +37,7 @@ export default function PortraitNote() {
         onPointerDown={event => { touch.current = event.pointerType === 'touch'; }}
         onFocus={event => { if (event.currentTarget.matches(':focus-visible')) reveal(); }}
         onBlur={() => setOpen(false)}
-        onClick={() => { if (touch.current || !hovering.current) { if (open) setOpen(false); else reveal(); } else { setNote(nextNote.current++ % notes.length); setOpen(true); } }}>
+        onClick={() => { if (touch.current || !hovering.current) { if (open) setOpen(false); else reveal(); } else showNextNote(); }}>
         <img src="/me.jpeg" alt="Samarth Sharma" loading="lazy" width="720" height="900" draggable={false} />
         <span className="portrait-note" id="portrait-note" hidden={!open}>{notes[note]}</span>
       </button>
