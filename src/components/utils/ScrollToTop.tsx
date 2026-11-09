@@ -1,10 +1,19 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
+import useScrollReveal from '../../hooks/useScrollReveal';
+
+const titles: Readonly<Record<string, string>> = {
+  '/': 'Samarth Sharma | Portfolio',
+  '/projects': 'Project archive | Samarth Sharma',
+  '/resume': 'Resume | Samarth Sharma',
+};
 
 export default function ScrollToTop() {
   const { pathname, hash, key } = useLocation();
   const navigationType = useNavigationType();
+  useScrollReveal();
   const previousPath = useRef(pathname);
+  const firstPath = useRef<string | null>(pathname);
   const keyboardInput = useRef(true);
 
   useEffect(() => {
@@ -17,6 +26,16 @@ export default function ScrollToTop() {
       window.removeEventListener('pointerdown', onPointerDown, true);
     };
   }, []);
+
+  useEffect(() => {
+    if (firstPath.current === pathname || matchMedia('(prefers-reduced-motion: reduce)').matches) { firstPath.current = null; return; }
+    firstPath.current = null;
+    document.getElementById('main-content')?.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' });
+  }, [pathname]);
+
+  useEffect(() => {
+    document.title = titles[pathname] ?? 'Page not found | Samarth Sharma';
+  }, [pathname]);
 
   useEffect(() => {
     const samePage = previousPath.current === pathname;
@@ -35,16 +54,20 @@ export default function ScrollToTop() {
     const stop = () => {
       cancelAnimationFrame(frame);
     };
-    frame = requestAnimationFrame(() => {
+    let attempts = 0;
+    const locate = () => {
       const target = document.getElementById(id);
-      if (!target) return;
+      if (!target) {
+        if (++attempts < 120) frame = requestAnimationFrame(locate);
+        return;
+      }
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion || keyboardInput.current || !samePage || navigationType === 'POP') {
         target.scrollIntoView({ behavior: 'instant', block: 'start' });
-        target.focus({ preventScroll: true });
+        if (!target.contains(document.activeElement)) target.focus({ preventScroll: true });
         return;
       }
-      target.focus({ preventScroll: true });
+      if (!target.contains(document.activeElement)) target.focus({ preventScroll: true });
       const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
       const start = window.scrollY;
       const end = Math.max(0, Math.min(start + target.getBoundingClientRect().top - margin, document.documentElement.scrollHeight - window.innerHeight));
@@ -59,7 +82,8 @@ export default function ScrollToTop() {
         if (progress < 1) frame = requestAnimationFrame(step);
       };
       frame = requestAnimationFrame(step);
-    });
+    };
+    frame = requestAnimationFrame(locate);
     window.addEventListener('wheel', stop, { passive: true });
     window.addEventListener('touchstart', stop, { passive: true });
     window.addEventListener('pointerdown', stop, true);

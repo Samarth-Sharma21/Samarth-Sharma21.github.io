@@ -1,9 +1,23 @@
-import { MapPin } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { profile } from '../../data/profile';
 
 export default function ExperienceSection() {
   return (
     <section id="experience" className="experience-section section-space" tabIndex={-1}>
-      <div className="container-custom experience-grid"><div><h2>Experience.</h2><p className="experience-intro">Building reliable systems with the people who depend on them.</p></div><div className="experience-detail"><div className="experience-title"><div><h3>DevOps Engineer</h3><p>Paytm</p></div></div><div className="experience-top"><span className="experience-dates">June 2025 to present</span><span><MapPin size={13} /> Noida, India</span></div><p>Supporting CI/CD pipelines and cloud infrastructure. Working with development teams to automate deployments and improve the reliability of their applications.</p><ul className="experience-points"><li>Configure and maintain Jenkins pipelines for testing and deployment.</li><li>Manage containerized applications with Docker and Kubernetes.</li><li>Work with AWS infrastructure and Terraform configuration.</li><li>Build automation scripts and monitor application infrastructure.</li></ul><ul className="tech-list" aria-label="Experience technologies">{['Docker', 'Kubernetes', 'Jenkins', 'AWS', 'Terraform'].map(tech => <li key={tech}>{tech}</li>)}</ul></div></div>
+      <div className="container-custom experience-grid">
+        <div><h2>Experience.</h2><p className="experience-intro">Building reliable systems with the people who depend on them.</p></div>
+        <article className="xp">
+          <header className="xp-head">
+            <div><p className="xp-company">{profile.company}</p><h3>{profile.role}</h3></div>
+            <dl className="xp-meta"><div><dt>Started</dt><dd className="experience-dates">{profile.dates.split(',')[0]}</dd></div><div><dt>Length</dt><dd>{profile.length}</dd></div><div><dt>Based in</dt><dd>{profile.city}</dd></div></dl>
+          </header>
+          <p className="xp-summary">{profile.experienceSummary}</p>
+          <ol className="xp-trace">{profile.experiencePoints.map(point => <li key={point}>{point}</li>)}</ol>
+          <ul className="xp-tools" aria-label="Experience technologies">{profile.experienceTools.map(tech => <li key={tech}><img src={`/tool-icons/${profile.toolIcons[tech]}.svg`} alt="" width="20" height="20" />{tech}</li>)}</ul>
+          <Link className="text-link" to="/resume">View the one page resume <ArrowUpRight size={16} aria-hidden="true" /></Link>
+        </article>
+      </div>
     </section>
   );
 }

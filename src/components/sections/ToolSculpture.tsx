@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from 're
 import { Pause, Play } from 'lucide-react';
 import OrbFlight, { type FlightStart } from './OrbFlight';
 import { rayMorph } from './rayMorph';
+import { Link } from 'react-router-dom';
+import { projects } from '../../data/projects';
 
 interface Tool {
   name: string;
@@ -27,6 +29,10 @@ const tools: readonly Tool[] = [
   { name: 'AWS', icon: 'amazonwebservices' },
 ];
 const rings = [tools.slice(0, 10), tools.slice(10)];
+const projectsUsing = (name: string) => projects.filter(project => project.tech.includes(name)).length;
+const interfaceTools = new Set(['react', 'typescript', 'javascript', 'nextjs']);
+const systemTools = new Set(['docker', 'kubernetes', 'terraform', 'jenkins', 'ansible', 'prometheus', 'grafana', 'azure', 'apachekafka', 'podman', 'amazonwebservices', 'googlecloud', 'elasticsearch', 'git', 'github']);
+const toolKind = (icon: string) => interfaceTools.has(icon) ? 'interfaces' : systemTools.has(icon) ? 'systems' : undefined;
 
 export default function ToolSculpture() {
   const [flight, setFlight] = useState<FlightStart[] | null>(null);
@@ -92,6 +98,14 @@ export default function ToolSculpture() {
   }, [selectedTool]);
 
   const activeTool = focusedTool ?? hoveredTool ?? selectedTool;
+  const [lastTool, setLastTool] = useState<Tool | null>(null);
+  const [captionHeld, setCaptionHeld] = useState(false);
+  useEffect(() => { if (activeTool && projectsUsing(activeTool.name) > 0) setLastTool(activeTool); }, [activeTool]);
+  useEffect(() => {
+    if (!lastTool || activeTool || captionHeld) return;
+    const timer = window.setTimeout(() => setLastTool(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [lastTool, activeTool, captionHeld]);
   useEffect(() => {
     if (!activeTool || hasExplored.current) return;
     hasExplored.current = true;
@@ -116,10 +130,7 @@ export default function ToolSculpture() {
     const scene = sculptureRef.current?.querySelector('.tool-scene')?.getBoundingClientRect();
     const headerBottom = document.querySelector('header')?.getBoundingClientRect().bottom ?? 0;
     if (canFly && scene) {
-      canFly = scene.height + headerBottom + 32 <= innerHeight;
-      if (canFly && (scene.top < headerBottom + 12 || scene.bottom > innerHeight - 20)) {
-        window.scrollBy({ top: scene.top - Math.max(headerBottom + 12, (innerHeight - scene.height) / 2), behavior: 'instant' });
-      }
+      canFly = scene.top >= headerBottom + 12 && scene.bottom <= innerHeight - 20;
     }
     const starts = toolRefs.current.map((button, index) => {
       const image = button!.querySelector('img')!;
@@ -168,7 +179,7 @@ export default function ToolSculpture() {
               const phase = slots[toolIndex] * 360 / ring.length;
               const position: ToolPosition = { '--phase': `${phase}deg`, '--counter-phase': `${-phase}deg` };
               return <div className="tool-orbit-arm" style={position} key={tool.icon}><div className="tool-orbit-position"><div className="tool-counter-rotation">
-                <button className="tool-target" type="button" ref={element => { toolRefs.current[toolIndex] = element; }} tabIndex={focusedIndex === toolIndex ? 0 : -1} aria-label={`Explore ${tool.name}`} data-active={activeTool?.icon === tool.icon}
+                <button className="tool-target" type="button" ref={element => { toolRefs.current[toolIndex] = element; }} tabIndex={focusedIndex === toolIndex ? 0 : -1} aria-label={`Explore ${tool.name}`} data-kind={toolKind(tool.icon)} data-active={activeTool?.icon === tool.icon}
                   onPointerEnter={event => { if (event.pointerType === 'mouse') { setHoveredTool(tool); } }} onPointerLeave={() => setHoveredTool(null)}
                   onFocus={event => { setFocusedIndex(toolIndex); setFocusedTool(event.currentTarget.matches(':focus-visible') ? tool : null); }} onBlur={event => { if (!(event.relatedTarget instanceof Node && sculptureRef.current?.querySelector('.tool-inspector')?.contains(event.relatedTarget))) setFocusedTool(null); }}
                   onKeyDown={event => { const delta = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0; if (delta) { event.preventDefault(); toolRefs.current[(toolIndex + delta + tools.length) % tools.length]?.focus(); } }}
@@ -192,7 +203,7 @@ export default function ToolSculpture() {
         </div>
       </div>
       <figcaption id="tool-sculpture-caption" className="tool-sculpture-caption">
-        <p>Curiosity, in motion.<br /><span>Hover or tap a tool to explore.</span></p>
+        <p>Curiosity, in motion.<br /><span onPointerEnter={() => setCaptionHeld(true)} onPointerLeave={() => setCaptionHeld(false)} onFocus={() => setCaptionHeld(true)} onBlur={() => setCaptionHeld(false)}>{lastTool ? <Link to={`/projects?tech=${encodeURIComponent(lastTool.name)}`}>See {projectsUsing(lastTool.name)} {projectsUsing(lastTool.name) === 1 ? 'project' : 'projects'} using {lastTool.name}</Link> : 'Hover or tap a tool to explore.'}</span></p>
         <span id="tool-keyboard-help" className="sr-only">Use the arrow keys to move between tools.</span>
         <button className="tool-motion-control" type="button" disabled={reducedMotion} aria-label={reducedMotion ? 'Tool animation paused for reduced motion' : paused ? 'Play tool animation' : 'Pause tool animation'} aria-pressed={paused} onClick={() => { finishFlight(); setPaused(value => !value); }}>
           {paused || reducedMotion ? <Play size={15} aria-hidden="true" /> : <Pause size={15} aria-hidden="true" />}

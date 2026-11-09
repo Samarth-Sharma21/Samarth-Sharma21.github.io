@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import { profile } from './data/profile';
 
 const redirectedRoute = new URLSearchParams(location.search).get('portfolio-route');
 if (redirectedRoute?.startsWith('/') && !redirectedRoute.startsWith('//')) {
@@ -25,3 +26,5 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>
 );
+
+console.info(`%cReading the console? We should talk.%c\n${profile.email}`, 'font: 600 16px sans-serif; color: #ad1457', 'font: 13px sans-serif');

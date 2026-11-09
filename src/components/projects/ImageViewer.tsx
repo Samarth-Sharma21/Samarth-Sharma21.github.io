@@ -1,6 +1,6 @@
-import { useCallback, useLayoutEffect, useRef, type RefObject } from 'react';
+import { useCallback, useLayoutEffect, useRef, type PointerEvent, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import useReducedMotion from '../../hooks/useReducedMotion';
 
 function paintedBounds(image: HTMLImageElement) {
@@ -14,6 +14,8 @@ function paintedBounds(image: HTMLImageElement) {
 interface Props {
   title: string;
   src: string;
+  images: readonly string[];
+  visitUrl: string | null;
   index: number;
   count: number;
   animate: boolean;
@@ -25,13 +27,14 @@ interface Props {
   movement: { direction: number; animate: boolean };
 }
 
-export default function ImageViewer({ title, src, index, count, animate, trigger, restoreFocus, onClose, onStep, error, movement }: Props) {
+export default function ImageViewer({ title, src, images, visitUrl, index, count, animate, trigger, restoreFocus, onClose, onStep, error, movement }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const image = useRef<HTMLImageElement>(null);
   const flight = useRef<Animation>();
   const closing = useRef(false);
   const reduced = useReducedMotion();
   const previousSrc = useRef(src);
+  const swipeStart = useRef<number | null>(null);
 
   const thumbnailTransform = useCallback(() => {
     const thumb = trigger.current?.querySelector<HTMLImageElement>('img:not(.gallery-outgoing)');
@@ -83,10 +86,24 @@ export default function ImageViewer({ title, src, index, count, animate, trigger
     ], { duration: 220, easing: getComputedStyle(document.documentElement).getPropertyValue('--ease-out').trim() });
   }, [src, reduced, movement.animate, movement.direction]);
 
+  useLayoutEffect(() => {
+    if (images.length < 2) return;
+    new Image().src = images[(index + 1) % images.length];
+    new Image().src = images[(index - 1 + images.length) % images.length];
+  }, [images, index]);
+
   function step(direction: number, keyboard: boolean) {
     if (closing.current) return;
     flight.current?.cancel();
     onStep(direction, keyboard);
+  }
+
+  function endSwipe(event: PointerEvent<HTMLImageElement>) {
+    const start = swipeStart.current;
+    swipeStart.current = null;
+    if (start === null || event.pointerType === 'mouse') return;
+    const distance = event.clientX - start;
+    if (Math.abs(distance) > 48) step(distance < 0 ? 1 : -1, false);
   }
 
   function close(keyboard: boolean) {
@@ -114,11 +131,12 @@ export default function ImageViewer({ title, src, index, count, animate, trigger
         }
       }}>
       <div className="viewer-panel">
-        <div className="viewer-heading"><span>{title}</span><button autoFocus className="icon-button" aria-label="Close image viewer" onClick={event => close(event.detail === 0)}><X size={22} /></button></div>
-        <img ref={image} className="viewer-image" src={src} alt={`${title} screenshot ${index + 1} of ${count}`} />
+        <div className="viewer-heading"><span>{title}</span>{visitUrl && <a className="viewer-visit" href={visitUrl} target="_blank" rel="noopener noreferrer">Visit live <ArrowUpRight size={15} aria-hidden="true" /></a>}<button autoFocus className="icon-button" aria-label="Close image viewer" onClick={event => close(event.detail === 0)}><X size={22} /></button></div>
+        <img ref={image} className="viewer-image" onPointerDown={event => { swipeStart.current = event.clientX; }} onPointerUp={endSwipe} onPointerCancel={() => { swipeStart.current = null; }} src={src} alt={`${title} screenshot ${index + 1} of ${count}`} />
         <div className="viewer-controls">
           <button className="icon-button" disabled={count < 2} aria-label="Previous enlarged image" onClick={event => step(-1, event.detail === 0)}><ChevronLeft size={20} /></button>
           <span aria-live="polite">{index + 1} / {count}</span>
+          {count > 1 && <div className="viewer-thumbs">{images.map((image, position) => <button key={image} aria-label={`Show screenshot ${position + 1}`} aria-current={position === index} onClick={event => step(position - index, event.detail === 0)}><img src={image} alt="" /></button>)}</div>}
           <button className="icon-button" disabled={count < 2} aria-label="Next enlarged image" onClick={event => step(1, event.detail === 0)}><ChevronRight size={20} /></button>
         </div>
         {error && <p className="viewer-error" role="status">{error}</p>}

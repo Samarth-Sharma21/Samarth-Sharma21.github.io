@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowUpRight, Check, Copy } from 'lucide-react';
+import MessagePipeline from './MessagePipeline';
+import { profile } from '../../data/profile';
 
-const email = 'samarthsharma7621@gmail.com';
+const email = profile.email;
 const composeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
 type CopyState = 'idle' | 'copied' | 'unavailable';
 
@@ -20,11 +23,13 @@ export default function ContactSection() {
   }
 
   return (
+    <>
+    <Link className="ribbon" to="/#contact" aria-label="Go to contact"><span aria-hidden="true">{'Let\u2019s build something \u00b7 '.repeat(8)}</span></Link>
     <section id="contact" className="contact-section section-space container-custom" tabIndex={-1}>
       <div className="contact-grid">
+        <div className="contact-lead">
         <div className="contact-intro"><h2>Have a question?<br />Let's talk.</h2>
         <p>Curious about something in my portfolio, or have an idea you'd like to build? My inbox is open.</p></div>
-      </div>
       <div className="contact-details">
         <div className="email-row">
           <a href={composeUrl} target="_blank" rel="noopener noreferrer" aria-label={`Email ${email} using Gmail, opens in a new tab`}>samarthsharma7621<wbr />@gmail.com <ArrowUpRight aria-hidden="true" /></a>
@@ -35,6 +40,10 @@ export default function ContactSection() {
           <div className="contact-socials"><a href="https://github.com/Samarth-Sharma21" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={15} aria-hidden="true" /></a><a href="https://linkedin.com/in/samarth-sh" target="_blank" rel="noopener noreferrer">LinkedIn <ArrowUpRight size={15} aria-hidden="true" /></a></div>
         </div>
       </div>
+        </div>
+        <MessagePipeline address={email} />
+      </div>
     </section>
+    </>
   );
 }
